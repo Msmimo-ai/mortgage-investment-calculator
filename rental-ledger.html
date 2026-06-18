@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rental Property Deal Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1f26;
+    --ink-soft:#2a2e37;
+    --paper:#f6f5f0;
+    --paper-alt:#ebe9e1;
+    --line:#d7d4c8;
+    --slate:#5c6470;
+    --green:#1f7a5c;
+    --green-bright:#4ade80;
+    --red:#a8392f;
+    --red-bright:#ff6b6b;
+    --gold:#c9952c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.45;
+  }
+  .wrap{max-width:1220px;margin:0 auto;padding:32px 20px 80px;}
+
+  header{margin-bottom:32px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;
+    font-size:.72rem;color:var(--gold);font-weight:600;
+  }
+  h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;margin:.35rem 0 .5rem;letter-spacing:-0.01em;}
+  .sub{color:var(--slate);font-size:.92rem;max-width:640px;}
+
+  /* ---- form: every field flows left-to-right, 6 per row ---- */
+  .ledger-sheet{
+    background:#fff;border:1px solid var(--line);border-radius:6px;margin-bottom:28px;
+  }
+  .field-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+  @media (max-width:700px){ .field-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  @media (max-width:420px){ .field-grid{grid-template-columns:1fr;} }
+
+  .field{padding:12px 13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);}
+  .field label{
+    display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--slate);font-weight:600;margin-bottom:6px;
+  }
+  .field .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .field input[type=number]{
+    font-family:'IBM Plex Mono',monospace;font-size:1.05rem;border:none;
+    border-bottom:1px solid var(--line);background:transparent;padding:4px 2px;
+    flex:1 1 56px;min-width:56px;text-align:right;color:var(--ink);
+  }
+  .field input[type=number]:focus{outline:none;border-bottom:2px solid var(--gold);}
+
+  .pill{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex-shrink:0;}
+  .pill input{display:none;}
+  .pill label{
+    margin:0;padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:.66rem;
+    text-transform:none;letter-spacing:0;cursor:pointer;color:var(--slate);font-weight:500;
+    transition:background .1s, color .1s;
+  }
+  .pill input:checked + label{background:var(--slate);color:var(--paper);font-weight:700;}
+
+  .hint{font-size:.7rem;color:var(--slate);margin-top:6px;line-height:1.3;}
+  .hint.warn{color:var(--red);font-weight:600;display:none;}
+  .hint.warn.show{display:block;}
+
+  .qmark{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:16px;height:16px;border-radius:50%;background:var(--line);color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;
+    cursor:help;position:relative;margin-left:6px;flex-shrink:0;vertical-align:middle;
+  }
+  .qmark.on-dark{background:var(--gold);color:var(--ink);}
+  .qmark .tooltip{
+    display:none;position:absolute;bottom:140%;left:50%;transform:translateX(-50%);
+    width:230px;background:var(--ink);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;
+    font-size:.72rem;font-weight:400;line-height:1.4;padding:9px 11px;border-radius:6px;
+    z-index:20;text-align:left;text-transform:none;letter-spacing:normal;
+  }
+  .qmark:hover .tooltip, .qmark.active .tooltip{display:block;}
+
+  /* ---- warning banner ---- */
+  .warning-banner{
+    background:#fbeee9;border-top:1px solid #e3b8a4;border-bottom:1px solid #e3b8a4;
+    color:#7a3420;padding:12px 16px;font-size:.82rem;display:none;
+  }
+  .warning-banner.show{display:block;}
+  .warning-banner strong{font-family:'Space Grotesk',sans-serif;}
+
+  /* ---- summary cards ---- */
+  .summary-row{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:28px;border-radius:6px;overflow:hidden;
+  }
+  .summary-card{background:var(--ink);padding:18px 16px;}
+  .summary-card .label{
+    font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--paper);
+  }
+  .summary-card .value{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--paper);margin-top:4px;}
+  .summary-card .value.green{color:var(--green-bright);}
+  .summary-card .value.red{color:var(--red-bright);}
+  .summary-card .value.small{font-size:1.05rem;}
+  .summary-card .value .pos{color:var(--green-bright);}
+  .summary-card .value .neg{color:var(--red-bright);}
+
+  /* ---- table ---- */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:28px;border-radius:6px;}
+  table{border-collapse:collapse;width:100%;min-width:1140px;font-family:'IBM Plex Mono',monospace;font-size:.8rem;}
+  thead th{font-weight:500;padding:7px 9px;border-left:1px solid #3a3e47;white-space:nowrap;}
+  thead tr.group-header th{
+    background:var(--ink);color:var(--gold);font-family:'IBM Plex Sans',sans-serif;
+    font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;text-align:center;
+  }
+  thead tr.col-header th{background:var(--ink-soft);color:var(--paper);text-align:right;}
+  thead tr.col-header th:first-child{text-align:left;}
+  thead tr.group-header th:first-child{border-left:none;}
+  thead tr.col-header th:first-child{border-left:none;}
+  tbody td{padding:6px 9px;text-align:right;border-top:1px solid var(--line);white-space:nowrap;}
+  tbody tr:nth-child(even){background:var(--paper-alt);}
+  tbody tr:nth-child(odd){background:#fff;}
+  td.year{
+    font-weight:600;font-family:'Space Grotesk',sans-serif;text-align:left;
+    position:sticky;left:0;background:inherit;
+  }
+  .neg{color:var(--red);}
+  .pos{color:var(--green);}
+
+  /* ---- sale summary ---- */
+  .sale-summary{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:6px;
+    padding:26px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-bottom:28px;
+  }
+  .sale-summary h2{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;margin:0 0 16px;}
+  .sale-numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
+  .sale-numbers .label{font-size:.7rem;text-transform:uppercase;color:var(--slate);letter-spacing:.05em;}
+  .sale-numbers .value{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin-top:2px;}
+
+  .stamp{
+    width:138px;height:138px;border:3px double var(--red);border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transform:rotate(-9deg);color:var(--red);font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;text-align:center;opacity:.88;flex-shrink:0;
+  }
+  .stamp.green{border-color:var(--green);color:var(--green);}
+  .stamp .t1{font-size:.6rem;letter-spacing:.08em;}
+  .stamp .t2{font-size:1.25rem;font-weight:700;font-family:'Space Grotesk',sans-serif;line-height:1.1;margin:2px 0;}
+  .stamp .t3{font-size:.6rem;}
+
+  footer.notes{font-size:.8rem;color:var(--slate);border-top:1px solid var(--line);padding-top:18px;}
+  footer.notes ul{margin:8px 0 0;padding-left:18px;}
+  footer.notes li{margin-bottom:4px;}
+
+  @media (max-width:720px){
+    .sale-summary{grid-template-columns:1fr;}
+    .stamp{margin:0 auto;}
+    td.year{position:static;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Deal Analyzer</div>
+    <h1>Rental Property Deal Ledger</h1>
+    <p class="sub">Enter the numbers for a rental property and this works out the year-by-year cash return and total return (including mortgage principal paid down as equity built) through to resale — with rent escalation, mortgage insurance, and refinance leverage from another property factored in.</p>
+  </header>
+
+  <form class="ledger-sheet" id="dealForm" onsubmit="return false;">
+    <div class="field-grid">
+      <div class="field">
+        <label for="purchasePrice">Purchase Price</label>
+        <div class="row"><input type="number" id="purchasePrice" value="450000" min="0" step="1000"></div>
+      </div>
+      <div class="field">
+        <label for="downPaymentValue">Down Payment<span class="qmark">?<span class="tooltip">Below 20% down, you'd need to live in one of the units for the mortgage to be insurable, and CMHC mortgage insurance applies — the premium gets added to your loan automatically below.</span></span></label>
+        <div class="row">
+          <input type="number" id="downPaymentValue" value="20" min="0" step="1">
+          <div class="pill">
+            <input type="radio" name="downPaymentType" id="dpAmount" value="amount">
+            <label for="dpAmount">$</label>
+            <input type="radio" name="downPaymentType" id="dpPercent" value="percent" checked>
+            <label for="dpPercent">%</label>
+          </div>
+        </div>
+        <div class="warning-banner" id="insuranceWarning" style="grid-column:1/-1"></div>
+      </div>
+      <div class="field">
+        <label for="salePrice">Expected Sale Price</label>
+        <div class="row"><input type="number" id="salePrice" value="500000" min="0" step="1000"></div>
+      </div>
+      <div class="field">
+        <label for="resaleYears">Years Until Resale</label>
+        <div class="row"><input type="number" id="resaleYears" value="7" min="1" step="1"></div>
+      </div>
+      <div class="field">
+        <label for="interestRate">Annual Interest Rate (%)</label>
+        <div class="row"><input type="number" id="interestRate" value="5.5" min="0" step="0.05"></div>
+      </div>
+      <div class="field">
+        <label for="loanTermYears">Loan Term (years)</label>
+        <div class="row"><input type="number" id="loanTermYears" value="25" min="1" step="1"></div>
+      </div>
+      <div class="field">
+        <label for="rentValue">Rent</label>
+        <div class="row">
+          <input type="number" id="rentValue" value="2200" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="rentPeriod" id="rentMonth" value="month" checked>
+            <label for="rentMonth">Mo</label>
+            <input type="radio" name="rentPeriod" id="rentYear" value="year">
+            <label for="rentYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rentIncreasePct">Annual Rent Increase (%)</label>
+        <div class="row"><input type="number" id="rentIncreasePct" value="2" min="0" step="0.1"></div>
+        <div class="hint warn" id="rentIncreaseNote"></div>
+      </div>
+      <div class="field">
+        <label for="propertyTaxValue">Property Tax</label>
+        <div class="row">
+          <input type="number" id="propertyTaxValue" value="4200" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="propertyTaxPeriod" id="propTaxMonth" value="month">
+            <label for="propTaxMonth">Mo</label>
+            <input type="radio" name="propertyTaxPeriod" id="propTaxYear" value="year" checked>
+            <label for="propTaxYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="schoolTaxValue">School Tax</label>
+        <div class="row">
+          <input type="number" id="schoolTaxValue" value="450" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="schoolTaxPeriod" id="schoolTaxMonth" value="month">
+            <label for="schoolTaxMonth">Mo</label>
+            <input type="radio" name="schoolTaxPeriod" id="schoolTaxYear" value="year" checked>
+            <label for="schoolTaxYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="insuranceValue">Home Insurance</label>
+        <div class="row">
+          <input type="number" id="insuranceValue" value="1200" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="insurancePeriod" id="insMonth" value="month">
+            <label for="insMonth">Mo</label>
+            <input type="radio" name="insurancePeriod" id="insYear" value="year" checked>
+            <label for="insYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="condoFeeValue">Condo Fee</label>
+        <div class="row">
+          <input type="number" id="condoFeeValue" value="0" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="condoFeePeriod" id="condoMonth" value="month" checked>
+            <label for="condoMonth">Mo</label>
+            <input type="radio" name="condoFeePeriod" id="condoYear" value="year">
+            <label for="condoYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="maintenanceFeeValue">Maintenance / Repairs</label>
+        <div class="row">
+          <input type="number" id="maintenanceFeeValue" value="150" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="maintenanceFeePeriod" id="maintMonth" value="month" checked>
+            <label for="maintMonth">Mo</label>
+            <input type="radio" name="maintenanceFeePeriod" id="maintYear" value="year">
+            <label for="maintYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="utilitiesValue">Utilities</label>
+        <div class="row">
+          <input type="number" id="utilitiesValue" value="0" min="0" step="10">
+          <div class="pill">
+            <input type="radio" name="utilitiesPeriod" id="utilMonth" value="month" checked>
+            <label for="utilMonth">Mo</label>
+            <input type="radio" name="utilitiesPeriod" id="utilYear" value="year">
+            <label for="utilYear">Yr</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="refinanceAmount">Refinanced Amount<span class="qmark">?<span class="tooltip">Treated as interest-only money you borrow against another property you already own, to help fund this purchase. It reduces the cash you personally need to put in.</span></span></label>
+        <div class="row"><input type="number" id="refinanceAmount" value="0" min="0" step="1000"></div>
+      </div>
+      <div class="field">
+        <label for="refinanceRate">Refinanced Interest Rate (%)<span class="qmark">?<span class="tooltip">Deductible against this property's rental income, since it's money borrowed to acquire an income-producing asset.</span></span></label>
+        <div class="row"><input type="number" id="refinanceRate" value="7" min="0" step="0.05"></div>
+      </div>
+      <div class="field">
+        <label for="marginalTaxRate">Marginal Income Tax Rate (%)</label>
+        <div class="row"><input type="number" id="marginalTaxRate" value="37" min="0" max="100" step="1"></div>
+      </div>
+      <div class="field">
+        <label for="capGainsInclusion">Capital Gains Inclusion Rate (%)</label>
+        <div class="row"><input type="number" id="capGainsInclusion" value="50" min="0" max="100" step="1"></div>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="summary-row" id="summaryRow"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr class="group-header">
+          <th rowspan="2">Year</th>
+          <th colspan="3">Income &amp; Expenses</th>
+          <th colspan="4">Mortgage</th>
+          <th colspan="2">Tax</th>
+          <th colspan="4">Return</th>
+        </tr>
+        <tr class="col-header">
+          <th>Rent</th><th>Op. Exp</th><th>NOI</th>
+          <th>Interest</th><th>Refi Int.</th><th>Principal</th><th>Balance</th>
+          <th>Taxable Inc.</th><th>Tax</th>
+          <th>After-Tax CF</th><th>CoC %</th><th>Total Return $</th><th>Total Return %</th>
+        </tr>
+      </thead>
+      <tbody id="ledgerBody"></tbody>
+    </table>
+  </div>
+
+  <div class="sale-summary" id="saleSummary">
+    <div>
+      <h2>At Resale</h2>
+      <div class="sale-numbers" id="saleNumbers"></div>
+    </div>
+    <div class="stamp" id="stampBox">
+      <div class="t1">Sold Year</div>
+      <div class="t2" id="stampYear">-</div>
+      <div class="t3" id="stampIrr">IRR -</div>
+    </div>
+  </div>
+
+  <footer class="notes">
+    <strong>Assumptions baked into this ledger:</strong>
+    <ul>
+      <li>Rent grows at the annual rate you set; operating expenses are held flat for the whole hold — no expense inflation.</li>
+      <li>Mortgage interest on both the primary loan and any refinance amount is treated as fully deductible against this property's rental income at your marginal rate; this assumes you have other income for losses to offset against in early years.</li>
+      <li>The refinanced amount is modelled as interest-only debt secured against the other building — its balance never changes here, and it isn't repaid out of this property's sale proceeds.</li>
+      <li>Capital Cost Allowance (depreciation) is not factored into the tax calculation.</li>
+      <li>Selling costs (agent commission, legal fees, etc.) are not included in the resale numbers.</li>
+      <li>Capital gains tax at resale uses the inclusion rate above multiplied by your marginal rate — a simplification of Canadian rules, not tax advice.</li>
+      <li>Mortgage insurance premium rates follow CMHC's published schedule for homeowner loans (1–4 units, owner-occupied). For a property you won't live in, Canadian lenders generally require a minimum 20% down payment with no insured option below that — this tool flags that case rather than inventing a premium for it.</li>
+      <li>Cash-on-cash, total return %, ROI and IRR are all measured against actual cash invested: down payment plus any unfinanced premium and QST, minus the refinanced amount used to help fund it.</li>
+      <li>The IRR accounts for the timing of each year's cash flow plus the net proceeds at resale — a true annualized return, not just an average.</li>
+      <li>None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.</li>
+    </ul>
+  </footer>
+
+</div>
+
+<script>
+function val(id){ return parseFloat(document.getElementById(id).value) || 0; }
+function period(name){ const el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : 'year'; }
+function toAnnual(v, p){ return p === 'month' ? v * 12 : v; }
+
+function fmtMoney(n, colorize){
+  if(n === null || n === undefined || isNaN(n)) return 'n/a';
+  const neg = n < 0;
+  const abs = Math.abs(Math.round(n));
+  const s = '$' + abs.toLocaleString('en-US');
+  const out = neg ? '-' + s : s;
+  if(!colorize) return out;
+  return '<span class="' + (neg ? 'neg' : 'pos') + '">' + out + '</span>';
+}
+function fmtPct(n, colorize){
+  if(n === null || n === undefined || isNaN(n)) return 'n/a';
+  const out = n.toFixed(1) + '%';
+  if(!colorize) return out;
+  return '<span class="' + (n < 0 ? 'neg' : 'pos') + '">' + out + '</span>';
+}
+function npv(rate, cfs){
+  let total = 0;
+  for(let t = 0; t < cfs.length; t++) total += cfs[t] / Math.pow(1 + rate, t);
+  return total;
+}
+function irr(cfs){
+  let low = -0.9999, high = 10;
+  if(npv(low, cfs) * npv(high, cfs) > 0) return null;
+  let mid = 0;
+  for(let i = 0; i < 200; i++){
+    mid = (low + high) / 2;
+    const v = npv(mid, cfs);
+    if(Math.abs(v) < 0.01) break;
+    if(npv(low, cfs) * v < 0) high = mid; else low = mid;
+  }
+  return mid;
+}
+
+// CMHC homeowner premium schedule (owner-occupied, 1-4 units), by LTV upper bound
+const ownerPremiumTable = [
+  { max: 65, rate: 0.60 },
+  { max: 75, rate: 1.70 },
+  { max: 80, rate: 2.40 },
+  { max: 85, rate: 2.80 },
+  { max: 90, rate: 3.10 },
+  { max: 95, rate: 4.00 }
+];
+function ownerPremiumRate(ltv){
+  for(const tier of ownerPremiumTable){ if(ltv <= tier.max + 1e-9) return tier.rate; }
+  return null; // beyond 95% LTV, not insurable
+}
+
+function recalc(){
+  const purchasePrice = val('purchasePrice');
+  const dpTypeReal = document.querySelector('#dpAmount').checked ? 'amount' : 'percent';
+  const dpRaw = val('downPaymentValue');
+  const downPayment = dpTypeReal === 'percent' ? purchasePrice * dpRaw / 100 : dpRaw;
+  const downPaymentPct = purchasePrice > 0 ? downPayment / purchasePrice * 100 : 0;
+  const salePrice = val('salePrice');
+  const resaleYears = Math.max(1, Math.round(val('resaleYears')) || 1);
+  const annualRate = val('interestRate');
+  const loanTermYears = Math.max(1, Math.round(val('loanTermYears')) || 1);
+  const capGainsInclusion = val('capGainsInclusion');
+  const marginalTaxRate = val('marginalTaxRate');
+  const rentIncreasePct = val('rentIncreasePct');
+
+  const rentNote = document.getElementById('rentIncreaseNote');
+  const TAL_REFERENCE_BASELINE = 3.1; // 2026 TAL average CPI-based reference rate for lease renewals
+  if(rentIncreasePct > TAL_REFERENCE_BASELINE){
+    rentNote.textContent = 'Above Quebec\u2019s ~3.1% 2026 TAL reference rate for lease renewals (the actual band runs roughly 2.7%\u20137.3% depending on heating type). A sitting tenant can refuse and force a TAL rent-fixing hearing above this \u2014 treat this rate as realistic mainly on tenant turnover, not a renewal.';
+    rentNote.classList.add('show');
+  } else {
+    rentNote.classList.remove('show');
+  }
+  const refinanceAmount = val('refinanceAmount');
+  const refinanceRate = val('refinanceRate');
+
+  const financePremium = true; // always add any premium to the mortgage
+
+  const rentBaseAnnual = toAnnual(val('rentValue'), period('rentPeriod'));
+  const propertyTaxAnnual = toAnnual(val('propertyTaxValue'), period('propertyTaxPeriod'));
+  const schoolTaxAnnual = toAnnual(val('schoolTaxValue'), period('schoolTaxPeriod'));
+  const insuranceAnnual = toAnnual(val('insuranceValue'), period('insurancePeriod'));
+  const condoFeeAnnual = toAnnual(val('condoFeeValue'), period('condoFeePeriod'));
+  const maintenanceAnnual = toAnnual(val('maintenanceFeeValue'), period('maintenanceFeePeriod'));
+  const utilitiesAnnual = toAnnual(val('utilitiesValue'), period('utilitiesPeriod'));
+  const operatingExpensesAnnual = propertyTaxAnnual + schoolTaxAnnual + insuranceAnnual + condoFeeAnnual + maintenanceAnnual + utilitiesAnnual;
+
+  // ---- mortgage insurance (CMHC) ----
+  const baseLoanAmount = Math.max(0, purchasePrice - downPayment);
+  const ltv = purchasePrice > 0 ? (baseLoanAmount / purchasePrice * 100) : 0;
+  const needsInsurance = downPaymentPct < 20 - 1e-9;
+
+  let premiumRate = null, premiumAmount = 0, qstAmount = 0, warningText = '';
+  if(needsInsurance){
+    premiumRate = ownerPremiumRate(ltv);
+    if(premiumRate === null){
+      warningText = 'A down payment below 5% (over 95% loan-to-value) isn\u2019t insurable — minimum down payment is 5%, and the numbers below assume no premium is added.';
+    } else {
+      premiumAmount = baseLoanAmount * premiumRate / 100;
+      qstAmount = premiumAmount * 0.09975;
+      warningText = 'Less than 20% down payment \u2014 you\u2019ll need to live in one of the units, and CMHC mortgage insurance will apply.';
+    }
+  }
+
+  const warningBanner = document.getElementById('insuranceWarning');
+  if(warningText){
+    warningBanner.textContent = warningText;
+    warningBanner.classList.add('show');
+  } else {
+    warningBanner.classList.remove('show');
+  }
+
+  const loanAmount = financePremium ? baseLoanAmount + premiumAmount : baseLoanAmount;
+  const upfrontInsuranceCash = financePremium ? qstAmount : (premiumAmount + qstAmount);
+
+  // ---- cash actually invested by the buyer ----
+  const totalCashNeeded = downPayment + upfrontInsuranceCash;
+  const cashInvested = Math.max(0, totalCashNeeded - refinanceAmount);
+
+  // ---- primary mortgage amortization ----
+  const r = annualRate / 100 / 12;
+  const n = loanTermYears * 12;
+  let monthlyPayment = 0;
+  if(loanAmount > 0){
+    monthlyPayment = r > 0 ? loanAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : loanAmount / n;
+  }
+
+  const refinanceInterestAnnual = refinanceAmount * refinanceRate / 100;
+
+  let balance = loanAmount;
+  const years = [];
+  for(let y = 1; y <= resaleYears; y++){
+    let interestY = 0, principalY = 0;
+    for(let m = 1; m <= 12; m++){
+      const monthIndex = (y - 1) * 12 + m;
+      if(balance <= 0.005 || monthIndex > n) break;
+      const interest = balance * r;
+      let principal = monthlyPayment - interest;
+      if(principal > balance) principal = balance;
+      if(principal < 0) principal = 0;
+      balance -= principal;
+      interestY += interest;
+      principalY += principal;
+    }
+    if(balance < 0) balance = 0;
+
+    const rentY = rentBaseAnnual * Math.pow(1 + rentIncreasePct / 100, y - 1);
+    const noiY = rentY - operatingExpensesAnnual;
+    const taxableIncome = noiY - interestY - refinanceInterestAnnual;
+    const tax = taxableIncome * marginalTaxRate / 100;
+    const mortgagePaymentY = interestY + principalY;
+    const afterTaxCF = noiY - mortgagePaymentY - refinanceInterestAnnual - tax;
+    const totalReturn = afterTaxCF + principalY;
+
+    years.push({
+      year: y, rent: rentY, opEx: operatingExpensesAnnual, noi: noiY,
+      interest: interestY, refiInterest: refinanceInterestAnnual, principal: principalY, balance,
+      taxableIncome, tax, afterTaxCF, totalReturn
+    });
+  }
+
+  const coc = years.map(yr => cashInvested > 0 ? yr.afterTaxCF / cashInvested * 100 : null);
+  const totalReturnPct = years.map(yr => cashInvested > 0 ? yr.totalReturn / cashInvested * 100 : null);
+
+  // ---- summary cards ----
+  const cashFlowY1 = years[0].noi - (years[0].interest + years[0].principal) - years[0].refiInterest;
+
+  const summaryRow = document.getElementById('summaryRow');
+  summaryRow.innerHTML = [
+    card('Monthly P&amp;I', fmtMoney(monthlyPayment)),
+    card('CMHC Insurance', premiumAmount > 0 ? fmtMoney(premiumAmount) : 'n/a'),
+    card('Total Cash Invested', fmtMoney(cashInvested)),
+    card('Cash Flow Y1', fmtMoney(cashFlowY1, true)),
+    card('After-Tax CF Y1', fmtMoney(years[0].afterTaxCF, true)),
+    card('Cash-on-Cash (Yr 1)', fmtPct(coc[0], true), coc[0] !== null && coc[0] >= 0 ? 'green' : (coc[0] !== null ? 'red' : '')),
+    card('Total Return $ Y1', fmtMoney(years[0].totalReturn, true)),
+    card('Total Return % Y1', fmtPct(totalReturnPct[0], true))
+  ].join('');
+
+  // ---- table ----
+  const tbody = document.getElementById('ledgerBody');
+  tbody.innerHTML = years.map((yr, i) => {
+    return '<tr>' +
+      '<td class="year">' + yr.year + '</td>' +
+      '<td>' + fmtMoney(yr.rent) + '</td>' +
+      '<td>' + fmtMoney(yr.opEx) + '</td>' +
+      '<td>' + fmtMoney(yr.noi, true) + '</td>' +
+      '<td>' + fmtMoney(yr.interest) + '</td>' +
+      '<td>' + fmtMoney(yr.refiInterest) + '</td>' +
+      '<td>' + fmtMoney(yr.principal) + '</td>' +
+      '<td>' + fmtMoney(yr.balance) + '</td>' +
+      '<td>' + fmtMoney(yr.taxableIncome) + '</td>' +
+      '<td>' + fmtMoney(yr.tax) + '</td>' +
+      '<td>' + fmtMoney(yr.afterTaxCF, true) + '</td>' +
+      '<td>' + fmtPct(coc[i], true) + '</td>' +
+      '<td>' + fmtMoney(yr.totalReturn, true) + '</td>' +
+      '<td>' + fmtPct(totalReturnPct[i], true) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  // ---- sale economics ----
+  const last = years[years.length - 1];
+  const remainingBalance = last ? last.balance : loanAmount;
+  const capitalAppreciation = salePrice - purchasePrice;
+  const capGainsTax = capitalAppreciation > 0 ? capitalAppreciation * capGainsInclusion / 100 * marginalTaxRate / 100 : 0;
+  const netSaleProceeds = salePrice - remainingBalance - capGainsTax;
+  const totalCashFlowOverHold = years.reduce((s, yr) => s + yr.afterTaxCF, 0);
+  const totalPrincipalPaid = loanAmount - remainingBalance;
+  const totalProfit = totalPrincipalPaid + totalCashFlowOverHold + (capitalAppreciation - capGainsTax);
+  const overallROI = cashInvested > 0 ? totalProfit / cashInvested * 100 : null;
+
+  const cfs = [-cashInvested];
+  years.forEach((yr, i) => {
+    cfs.push(i === years.length - 1 ? yr.afterTaxCF + netSaleProceeds : yr.afterTaxCF);
+  });
+  const irrRate = cashInvested > 0 ? irr(cfs) : null;
+
+  const saleNumbers = document.getElementById('saleNumbers');
+  saleNumbers.innerHTML = [
+    saleStat('Sale Price', fmtMoney(salePrice)),
+    saleStat('Remaining Loan Balance', fmtMoney(remainingBalance)),
+    saleStat('Capital Appreciation', fmtMoney(capitalAppreciation, true)),
+    saleStat('Est. Capital Gains Tax', fmtMoney(capGainsTax)),
+    saleStat('Net Sale Proceeds', fmtMoney(netSaleProceeds)),
+    saleStat('Total Cash Flow During Hold', fmtMoney(totalCashFlowOverHold, true)),
+    saleStat('Equity Built (Principal Paid)', fmtMoney(totalPrincipalPaid)),
+    saleStat('Total Profit', fmtMoney(totalProfit, true)),
+    saleStat('Overall ROI', fmtPct(overallROI, true))
+  ].join('');
+
+  document.getElementById('stampYear').textContent = resaleYears;
+  document.getElementById('stampIrr').textContent = irrRate === null ? 'IRR n/a' : 'IRR ' + (irrRate * 100).toFixed(1) + '%';
+  const stampBox = document.getElementById('stampBox');
+  stampBox.className = 'stamp' + (irrRate !== null && irrRate >= 0 ? ' green' : '');
+}
+
+function card(label, value, colorClass){
+  return '<div class="summary-card"><div class="label">' + label + '</div><div class="value' + (colorClass ? ' ' + colorClass : '') + (String(value).length > 9 ? ' small' : '') + '">' + value + '</div></div>';
+}
+function saleStat(label, value){
+  return '<div><div class="label">' + label + '</div><div class="value">' + value + '</div></div>';
+}
+
+document.querySelectorAll('.qmark').forEach(q => {
+  q.addEventListener('click', e => {
+    e.stopPropagation();
+    const wasActive = q.classList.contains('active');
+    document.querySelectorAll('.qmark.active').forEach(o => o.classList.remove('active'));
+    if(!wasActive) q.classList.add('active');
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.qmark.active').forEach(o => o.classList.remove('active'));
+});
+
+document.getElementById('dealForm').addEventListener('input', recalc);
+document.getElementById('dealForm').addEventListener('change', recalc);
+recalc();
+</script>
+</body>
+</html>
