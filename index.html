@@ -30,7 +30,15 @@
   }
   .wrap{max-width:1220px;margin:0 auto;padding:32px 20px 80px;}
 
-  header{margin-bottom:32px;}
+  header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .header-text{flex:1 1 auto;min-width:220px;}
+  .lang-pill{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex-shrink:0;}
+  .lang-pill button{
+    border:none;background:transparent;cursor:pointer;margin:0;padding:7px 14px;
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;
+    color:var(--slate);transition:background .1s, color .1s;
+  }
+  .lang-pill button.active{background:var(--ink);color:var(--paper);}
   .eyebrow{
     font-family:'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;
     font-size:.72rem;color:var(--gold);font-weight:600;
@@ -170,19 +178,27 @@
 <div class="wrap">
 
   <header>
-    <div class="eyebrow">Deal Analyzer</div>
-    <h1>Rental Property Deal Ledger</h1>
-    <p class="sub">Enter the numbers for a rental property and this works out the year-by-year cash return and total return (including mortgage principal paid down as equity built) through to resale — with rent escalation, mortgage insurance, and refinance leverage from another property factored in.</p>
+    <div class="header-text">
+      <div class="eyebrow" data-i18n="eyebrow">Deal Analyzer</div>
+      <h1 data-i18n="title">Rental Property Deal Ledger</h1>
+      <p class="sub" data-i18n="subtitle">Enter the numbers for a rental property and this works out the year-by-year cash return and total return (including mortgage principal paid down as equity built) through to resale — with rent escalation, mortgage insurance, and refinance leverage from another property factored in.</p>
+    </div>
+    <div class="lang-pill" id="langPill">
+      <button type="button" data-lang="en" class="active">EN</button>
+      <button type="button" data-lang="fr">FR</button>
+      <button type="button" data-lang="zh">中文</button>
+      <button type="button" data-lang="es">ES</button>
+    </div>
   </header>
 
   <form class="ledger-sheet" id="dealForm" onsubmit="return false;">
     <div class="field-grid">
       <div class="field">
-        <label for="purchasePrice">Purchase Price</label>
+        <label for="purchasePrice" data-i18n="purchasePrice">Purchase Price</label>
         <div class="row"><input type="number" id="purchasePrice" value="450000" min="0" step="1000"></div>
       </div>
       <div class="field">
-        <label for="downPaymentValue">Down Payment<span class="qmark">?<span class="tooltip">Below 20% down, you'd need to live in one of the units for the mortgage to be insurable, and CMHC mortgage insurance applies — the premium gets added to your loan automatically below.</span></span></label>
+        <label for="downPaymentValue"><span data-i18n="downPayment">Down Payment</span><span class="qmark">?<span class="tooltip" data-i18n="downPaymentTooltip">Below 20% down, you'd need to live in one of the units for the mortgage to be insurable, and CMHC mortgage insurance applies — the premium gets added to your loan automatically below.</span></span></label>
         <div class="row">
           <input type="number" id="downPaymentValue" value="20" min="0" step="1">
           <div class="pill">
@@ -195,124 +211,124 @@
         <div class="warning-banner" id="insuranceWarning" style="grid-column:1/-1"></div>
       </div>
       <div class="field">
-        <label for="salePrice">Expected Sale Price</label>
+        <label for="salePrice" data-i18n="salePrice">Expected Sale Price</label>
         <div class="row"><input type="number" id="salePrice" value="500000" min="0" step="1000"></div>
       </div>
       <div class="field">
-        <label for="resaleYears">Years Until Resale</label>
+        <label for="resaleYears" data-i18n="resaleYears">Years Until Resale</label>
         <div class="row"><input type="number" id="resaleYears" value="7" min="1" step="1"></div>
       </div>
       <div class="field">
-        <label for="interestRate">Annual Interest Rate (%)</label>
+        <label for="interestRate" data-i18n="interestRate">Annual Interest Rate (%)</label>
         <div class="row"><input type="number" id="interestRate" value="5.5" min="0" step="0.05"></div>
       </div>
       <div class="field">
-        <label for="loanTermYears">Loan Term (years)</label>
+        <label for="loanTermYears" data-i18n="loanTermYears">Loan Term (years)</label>
         <div class="row"><input type="number" id="loanTermYears" value="25" min="1" step="1"></div>
       </div>
       <div class="field">
-        <label for="rentValue">Rent</label>
+        <label for="rentValue" data-i18n="rent">Rent</label>
         <div class="row">
           <input type="number" id="rentValue" value="2200" min="0" step="10">
           <div class="pill">
             <input type="radio" name="rentPeriod" id="rentMonth" value="month" checked>
-            <label for="rentMonth">Mo</label>
+            <label for="rentMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="rentPeriod" id="rentYear" value="year">
-            <label for="rentYear">Yr</label>
+            <label for="rentYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="rentIncreasePct">Annual Rent Increase (%)</label>
+        <label for="rentIncreasePct" data-i18n="rentIncreasePct">Annual Rent Increase (%)</label>
         <div class="row"><input type="number" id="rentIncreasePct" value="2" min="0" step="0.1"></div>
         <div class="hint warn" id="rentIncreaseNote"></div>
       </div>
       <div class="field">
-        <label for="propertyTaxValue">Property Tax</label>
+        <label for="propertyTaxValue" data-i18n="propertyTax">Property Tax</label>
         <div class="row">
           <input type="number" id="propertyTaxValue" value="4200" min="0" step="10">
           <div class="pill">
             <input type="radio" name="propertyTaxPeriod" id="propTaxMonth" value="month">
-            <label for="propTaxMonth">Mo</label>
+            <label for="propTaxMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="propertyTaxPeriod" id="propTaxYear" value="year" checked>
-            <label for="propTaxYear">Yr</label>
+            <label for="propTaxYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="schoolTaxValue">School Tax</label>
+        <label for="schoolTaxValue" data-i18n="schoolTax">School Tax</label>
         <div class="row">
           <input type="number" id="schoolTaxValue" value="450" min="0" step="10">
           <div class="pill">
             <input type="radio" name="schoolTaxPeriod" id="schoolTaxMonth" value="month">
-            <label for="schoolTaxMonth">Mo</label>
+            <label for="schoolTaxMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="schoolTaxPeriod" id="schoolTaxYear" value="year" checked>
-            <label for="schoolTaxYear">Yr</label>
+            <label for="schoolTaxYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="insuranceValue">Home Insurance</label>
+        <label for="insuranceValue" data-i18n="homeInsurance">Home Insurance</label>
         <div class="row">
           <input type="number" id="insuranceValue" value="1200" min="0" step="10">
           <div class="pill">
             <input type="radio" name="insurancePeriod" id="insMonth" value="month">
-            <label for="insMonth">Mo</label>
+            <label for="insMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="insurancePeriod" id="insYear" value="year" checked>
-            <label for="insYear">Yr</label>
+            <label for="insYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="condoFeeValue">Condo Fee</label>
+        <label for="condoFeeValue" data-i18n="condoFee">Condo Fee</label>
         <div class="row">
           <input type="number" id="condoFeeValue" value="0" min="0" step="10">
           <div class="pill">
             <input type="radio" name="condoFeePeriod" id="condoMonth" value="month" checked>
-            <label for="condoMonth">Mo</label>
+            <label for="condoMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="condoFeePeriod" id="condoYear" value="year">
-            <label for="condoYear">Yr</label>
+            <label for="condoYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="maintenanceFeeValue">Maintenance / Repairs</label>
+        <label for="maintenanceFeeValue" data-i18n="maintenanceFee">Maintenance / Repairs</label>
         <div class="row">
           <input type="number" id="maintenanceFeeValue" value="150" min="0" step="10">
           <div class="pill">
             <input type="radio" name="maintenanceFeePeriod" id="maintMonth" value="month" checked>
-            <label for="maintMonth">Mo</label>
+            <label for="maintMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="maintenanceFeePeriod" id="maintYear" value="year">
-            <label for="maintYear">Yr</label>
+            <label for="maintYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="utilitiesValue">Utilities</label>
+        <label for="utilitiesValue" data-i18n="utilities">Utilities</label>
         <div class="row">
           <input type="number" id="utilitiesValue" value="0" min="0" step="10">
           <div class="pill">
             <input type="radio" name="utilitiesPeriod" id="utilMonth" value="month" checked>
-            <label for="utilMonth">Mo</label>
+            <label for="utilMonth" data-i18n="mo">Mo</label>
             <input type="radio" name="utilitiesPeriod" id="utilYear" value="year">
-            <label for="utilYear">Yr</label>
+            <label for="utilYear" data-i18n="yr">Yr</label>
           </div>
         </div>
       </div>
       <div class="field">
-        <label for="refinanceAmount">Refinanced Amount<span class="qmark">?<span class="tooltip">Treated as interest-only money you borrow against another property you already own, to help fund this purchase. It reduces the cash you personally need to put in.</span></span></label>
+        <label for="refinanceAmount"><span data-i18n="refinanceAmount">Refinanced Amount</span><span class="qmark">?<span class="tooltip" data-i18n="refinanceAmountTooltip">Treated as interest-only money you borrow against another property you already own, to help fund this purchase. It reduces the cash you personally need to put in.</span></span></label>
         <div class="row"><input type="number" id="refinanceAmount" value="0" min="0" step="1000"></div>
       </div>
       <div class="field">
-        <label for="refinanceRate">Refinanced Interest Rate (%)<span class="qmark">?<span class="tooltip">Deductible against this property's rental income, since it's money borrowed to acquire an income-producing asset.</span></span></label>
+        <label for="refinanceRate"><span data-i18n="refinanceRate">Refinanced Interest Rate (%)</span><span class="qmark">?<span class="tooltip" data-i18n="refinanceRateTooltip">Deductible against this property's rental income, since it's money borrowed to acquire an income-producing asset.</span></span></label>
         <div class="row"><input type="number" id="refinanceRate" value="7" min="0" step="0.05"></div>
       </div>
       <div class="field">
-        <label for="marginalTaxRate">Marginal Income Tax Rate (%)</label>
+        <label for="marginalTaxRate" data-i18n="marginalTaxRate">Marginal Income Tax Rate (%)</label>
         <div class="row"><input type="number" id="marginalTaxRate" value="37" min="0" max="100" step="1"></div>
       </div>
       <div class="field">
-        <label for="capGainsInclusion">Capital Gains Inclusion Rate (%)</label>
+        <label for="capGainsInclusion" data-i18n="capGainsInclusion">Capital Gains Inclusion Rate (%)</label>
         <div class="row"><input type="number" id="capGainsInclusion" value="50" min="0" max="100" step="1"></div>
       </div>
     </div>
@@ -325,17 +341,17 @@
     <table>
       <thead>
         <tr class="group-header">
-          <th rowspan="2">Year</th>
-          <th colspan="3">Income &amp; Expenses</th>
-          <th colspan="4">Mortgage</th>
-          <th colspan="2">Tax</th>
-          <th colspan="4">Return</th>
+          <th rowspan="2" data-i18n="colYear">Year</th>
+          <th colspan="3" data-i18n="groupIncomeExpenses">Income &amp; Expenses</th>
+          <th colspan="4" data-i18n="groupMortgage">Mortgage</th>
+          <th colspan="2" data-i18n="groupTax">Tax</th>
+          <th colspan="4" data-i18n="groupReturn">Return</th>
         </tr>
         <tr class="col-header">
-          <th>Rent</th><th>Op. Exp</th><th>NOI</th>
-          <th>Interest</th><th>Refi Int.</th><th>Principal</th><th>Balance</th>
-          <th>Taxable Inc.</th><th>Tax</th>
-          <th>After-Tax CF</th><th>CoC %</th><th>Total Return $</th><th>Total Return %</th>
+          <th data-i18n="colRent">Rent</th><th data-i18n="colOpEx">Op. Exp</th><th data-i18n="colNOI">NOI</th>
+          <th data-i18n="colInterest">Interest</th><th data-i18n="colRefiInt">Refi Int.</th><th data-i18n="colPrincipal">Principal</th><th data-i18n="colBalance">Balance</th>
+          <th data-i18n="colTaxableInc">Taxable Inc.</th><th data-i18n="colTax">Tax</th>
+          <th data-i18n="colAfterTaxCF">After-Tax CF</th><th data-i18n="colCoC">CoC %</th><th data-i18n="colTotalReturnDollar">Total Return $</th><th data-i18n="colTotalReturnPct">Total Return %</th>
         </tr>
       </thead>
       <tbody id="ledgerBody"></tbody>
@@ -344,41 +360,274 @@
 
   <div class="sale-summary" id="saleSummary">
     <div>
-      <h2>At Resale</h2>
+      <h2 data-i18n="atResale">At Resale</h2>
       <div class="sale-numbers" id="saleNumbers"></div>
     </div>
     <div class="stamp" id="stampBox">
-      <div class="t1">Sold Year</div>
+      <div class="t1" data-i18n="soldYear">Sold Year</div>
       <div class="t2" id="stampYear">-</div>
       <div class="t3" id="stampIrr">IRR -</div>
     </div>
   </div>
 
   <footer class="notes">
-    <strong>Assumptions baked into this ledger:</strong>
+    <strong data-i18n="footerTitle">Assumptions baked into this ledger:</strong>
     <ul>
-      <li>Rent grows at the annual rate you set; operating expenses are held flat for the whole hold — no expense inflation.</li>
-      <li>Mortgage interest on both the primary loan and any refinance amount is treated as fully deductible against this property's rental income at your marginal rate; this assumes you have other income for losses to offset against in early years.</li>
-      <li>The refinanced amount is modelled as interest-only debt secured against the other building — its balance never changes here, and it isn't repaid out of this property's sale proceeds.</li>
-      <li>Capital Cost Allowance (depreciation) is not factored into the tax calculation.</li>
-      <li>Selling costs (agent commission, legal fees, etc.) are not included in the resale numbers.</li>
-      <li>Capital gains tax at resale uses the inclusion rate above multiplied by your marginal rate — a simplification of Canadian rules, not tax advice.</li>
-      <li>Mortgage insurance premium rates follow CMHC's published schedule for homeowner loans (1–4 units, owner-occupied). For a property you won't live in, Canadian lenders generally require a minimum 20% down payment with no insured option below that — this tool flags that case rather than inventing a premium for it.</li>
-      <li>Cash-on-cash, total return %, ROI and IRR are all measured against actual cash invested: down payment plus any unfinanced premium and QST, minus the refinanced amount used to help fund it.</li>
-      <li>The IRR accounts for the timing of each year's cash flow plus the net proceeds at resale — a true annualized return, not just an average.</li>
-      <li>None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.</li>
+      <li data-i18n="note1">Rent grows at the annual rate you set; operating expenses are held flat for the whole hold — no expense inflation.</li>
+      <li data-i18n="note2">Mortgage interest on both the primary loan and any refinance amount is treated as fully deductible against this property's rental income at your marginal rate; this assumes you have other income for losses to offset against in early years.</li>
+      <li data-i18n="note3">The refinanced amount is modelled as interest-only debt secured against the other building — its balance never changes here, and it isn't repaid out of this property's sale proceeds.</li>
+      <li data-i18n="note4">Capital Cost Allowance (depreciation) is not factored into the tax calculation.</li>
+      <li data-i18n="note5">Selling costs (agent commission, legal fees, etc.) are not included in the resale numbers.</li>
+      <li data-i18n="note6">Capital gains tax at resale uses the inclusion rate above multiplied by your marginal rate — a simplification of Canadian rules, not tax advice.</li>
+      <li data-i18n="note7">Mortgage insurance premium rates follow CMHC's published schedule for owner-occupied 1–4 unit loans. Below 20% down, the tool assumes you'll live in one of the units (the only way the mortgage is insurable) and adds the CMHC premium to the loan automatically.</li>
+      <li data-i18n="note8">Cash-on-cash, total return %, ROI and IRR are all measured against actual cash invested: down payment plus any unfinanced premium and QST, minus the refinanced amount used to help fund it.</li>
+      <li data-i18n="note9">The IRR accounts for the timing of each year's cash flow plus the net proceeds at resale — a true annualized return, not just an average.</li>
+      <li data-i18n="note10">None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.</li>
     </ul>
   </footer>
 
 </div>
 
 <script>
+const translations = {
+  en: {
+    eyebrow: 'Deal Analyzer',
+    title: 'Rental Property Deal Ledger',
+    subtitle: 'Enter the numbers for a rental property and this works out the year-by-year cash return and total return (including mortgage principal paid down as equity built) through to resale — with rent escalation, mortgage insurance, and refinance leverage from another property factored in.',
+    purchasePrice: 'Purchase Price',
+    downPayment: 'Down Payment',
+    downPaymentTooltip: 'Below 20% down, you\u2019d need to live in one of the units for the mortgage to be insurable, and CMHC mortgage insurance applies — the premium gets added to your loan automatically below.',
+    salePrice: 'Expected Sale Price',
+    resaleYears: 'Years Until Resale',
+    interestRate: 'Annual Interest Rate (%)',
+    loanTermYears: 'Loan Term (years)',
+    rent: 'Rent',
+    rentIncreasePct: 'Annual Rent Increase (%)',
+    propertyTax: 'Property Tax',
+    schoolTax: 'School Tax',
+    homeInsurance: 'Home Insurance',
+    condoFee: 'Condo Fee',
+    maintenanceFee: 'Maintenance / Repairs',
+    utilities: 'Utilities',
+    refinanceAmount: 'Refinanced Amount',
+    refinanceAmountTooltip: 'Treated as interest-only money you borrow against another property you already own, to help fund this purchase. It reduces the cash you personally need to put in.',
+    refinanceRate: 'Refinanced Interest Rate (%)',
+    refinanceRateTooltip: 'Deductible against this property\u2019s rental income, since it\u2019s money borrowed to acquire an income-producing asset.',
+    marginalTaxRate: 'Marginal Income Tax Rate (%)',
+    capGainsInclusion: 'Capital Gains Inclusion Rate (%)',
+    mo: 'Mo', yr: 'Yr',
+    colYear: 'Year', groupIncomeExpenses: 'Income & Expenses', groupMortgage: 'Mortgage', groupTax: 'Tax', groupReturn: 'Return',
+    colRent: 'Rent', colOpEx: 'Op. Exp', colNOI: 'NOI', colInterest: 'Interest', colRefiInt: 'Refi Int.',
+    colPrincipal: 'Principal', colBalance: 'Balance', colTaxableInc: 'Taxable Inc.', colTax: 'Tax',
+    colAfterTaxCF: 'After-Tax CF', colCoC: 'CoC %', colTotalReturnDollar: 'Total Return $', colTotalReturnPct: 'Total Return %',
+    atResale: 'At Resale', soldYear: 'Sold Year',
+    saleSalePrice: 'Sale Price', saleRemainingBalance: 'Remaining Loan Balance', saleCapitalAppreciation: 'Capital Appreciation',
+    saleCapGainsTax: 'Est. Capital Gains Tax', saleNetProceeds: 'Net Sale Proceeds', saleCashFlowHold: 'Total Cash Flow During Hold',
+    saleEquityBuilt: 'Equity Built (Principal Paid)', saleTotalProfit: 'Total Profit', saleOverallROI: 'Overall ROI',
+    cardMonthlyPI: 'Monthly P&I', cardCMHC: 'CMHC Insurance', cardCashInvested: 'Total Cash Invested',
+    cardCashFlowY1: 'Cash Flow Y1', cardAfterTaxCFY1: 'After-Tax CF Y1', cardCoCY1: 'Cash-on-Cash (Yr 1)',
+    cardTotalReturnDollarY1: 'Total Return $ Y1', cardTotalReturnPctY1: 'Total Return % Y1',
+    irrLabel: 'IRR', irrNA: 'IRR n/a', na: 'n/a',
+    warnBelow5: 'A down payment below 5% (over 95% loan-to-value) isn\u2019t insurable — minimum down payment is 5%, and the numbers below assume no premium is added.',
+    warnBelow20: 'Less than 20% down payment \u2014 you\u2019ll need to live in one of the units, and CMHC mortgage insurance will apply.',
+    rentNoteWarning: 'Above Quebec\u2019s ~3.1% 2026 TAL reference rate for lease renewals (the actual band runs roughly 2.7%\u20137.3% depending on heating type). A sitting tenant can refuse and force a TAL rent-fixing hearing above this \u2014 treat this rate as realistic mainly on tenant turnover, not a renewal.',
+    footerTitle: 'Assumptions baked into this ledger:',
+    note1: 'Rent grows at the annual rate you set; operating expenses are held flat for the whole hold — no expense inflation.',
+    note2: 'Mortgage interest on both the primary loan and any refinance amount is treated as fully deductible against this property\u2019s rental income at your marginal rate; this assumes you have other income for losses to offset against in early years.',
+    note3: 'The refinanced amount is modelled as interest-only debt secured against the other building — its balance never changes here, and it isn\u2019t repaid out of this property\u2019s sale proceeds.',
+    note4: 'Capital Cost Allowance (depreciation) is not factored into the tax calculation.',
+    note5: 'Selling costs (agent commission, legal fees, etc.) are not included in the resale numbers.',
+    note6: 'Capital gains tax at resale uses the inclusion rate above multiplied by your marginal rate — a simplification of Canadian rules, not tax advice.',
+    note7: 'Mortgage insurance premium rates follow CMHC\u2019s published schedule for owner-occupied 1–4 unit loans. Below 20% down, the tool assumes you\u2019ll live in one of the units (the only way the mortgage is insurable) and adds the CMHC premium to the loan automatically.',
+    note8: 'Cash-on-cash, total return %, ROI and IRR are all measured against actual cash invested: down payment plus any unfinanced premium and QST, minus the refinanced amount used to help fund it.',
+    note9: 'The IRR accounts for the timing of each year\u2019s cash flow plus the net proceeds at resale — a true annualized return, not just an average.',
+    note10: 'None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.'
+  },
+  fr: {
+    eyebrow: 'Analyseur de transaction',
+    title: 'Registre de transaction immobilière locative',
+    subtitle: 'Entrez les chiffres d\u2019une propriété locative et l\u2019outil calcule le rendement de trésorerie et le rendement total année par année (incluant le capital remboursé sur l\u2019hypothèque comme gain en équité) jusqu\u2019à la revente — en tenant compte de l\u2019indexation du loyer, de l\u2019assurance hypothécaire et du levier de refinancement d\u2019une autre propriété.',
+    purchasePrice: 'Prix d\u2019achat',
+    downPayment: 'Mise de fonds',
+    downPaymentTooltip: 'Avec moins de 20 % de mise de fonds, vous devrez habiter une des unités pour que l\u2019hypothèque soit assurable, et l\u2019assurance hypothécaire de la SCHL s\u2019appliquera — la prime est automatiquement ajoutée à votre prêt ci-dessous.',
+    salePrice: 'Prix de vente prévu',
+    resaleYears: 'Années avant la revente',
+    interestRate: 'Taux d\u2019intérêt annuel (%)',
+    loanTermYears: 'Durée du prêt (années)',
+    rent: 'Loyer',
+    rentIncreasePct: 'Augmentation annuelle du loyer (%)',
+    propertyTax: 'Taxe foncière',
+    schoolTax: 'Taxe scolaire',
+    homeInsurance: 'Assurance habitation',
+    condoFee: 'Frais de condo',
+    maintenanceFee: 'Entretien / Réparations',
+    utilities: 'Services publics',
+    refinanceAmount: 'Montant refinancé',
+    refinanceAmountTooltip: 'Traité comme un emprunt à intérêt seulement contracté contre une autre propriété que vous possédez déjà, pour financer cet achat. Cela réduit la somme d\u2019argent que vous devez investir personnellement.',
+    refinanceRate: 'Taux d\u2019intérêt du refinancement (%)',
+    refinanceRateTooltip: 'Déductible du revenu locatif de cette propriété, puisqu\u2019il s\u2019agit d\u2019argent emprunté pour acquérir un actif générateur de revenu.',
+    marginalTaxRate: 'Taux d\u2019imposition marginal (%)',
+    capGainsInclusion: 'Taux d\u2019inclusion des gains en capital (%)',
+    mo: 'Mo', yr: 'An',
+    colYear: 'Année', groupIncomeExpenses: 'Revenus et dépenses', groupMortgage: 'Hypothèque', groupTax: 'Impôt', groupReturn: 'Rendement',
+    colRent: 'Loyer', colOpEx: 'Dép. expl.', colNOI: 'RNE', colInterest: 'Intérêt', colRefiInt: 'Int. refi.',
+    colPrincipal: 'Capital', colBalance: 'Solde', colTaxableInc: 'Rev. imposable', colTax: 'Impôt',
+    colAfterTaxCF: 'FT après impôt', colCoC: 'Rend. MF %', colTotalReturnDollar: 'Rendement total $', colTotalReturnPct: 'Rendement total %',
+    atResale: 'À la revente', soldYear: 'Année de vente',
+    saleSalePrice: 'Prix de vente', saleRemainingBalance: 'Solde de prêt restant', saleCapitalAppreciation: 'Plus-value (appréciation)',
+    saleCapGainsTax: 'Impôt estimé sur gains en capital', saleNetProceeds: 'Produit net de la vente', saleCashFlowHold: 'Flux de trésorerie total pendant la détention',
+    saleEquityBuilt: 'Équité accumulée (capital remboursé)', saleTotalProfit: 'Profit total', saleOverallROI: 'ROI global',
+    cardMonthlyPI: 'Versement hyp. mensuel', cardCMHC: 'Assurance SCHL', cardCashInvested: 'Comptant total investi',
+    cardCashFlowY1: 'Flux de trésorerie An 1', cardAfterTaxCFY1: 'FT après impôt An 1', cardCoCY1: 'Rendement sur mise de fonds (An 1)',
+    cardTotalReturnDollarY1: 'Rendement total $ An 1', cardTotalReturnPctY1: 'Rendement total % An 1',
+    irrLabel: 'TRI', irrNA: 'TRI s.o.', na: 's.o.',
+    warnBelow5: 'Une mise de fonds inférieure à 5 % (plus de 95 % de rapport prêt-valeur) n\u2019est pas assurable — la mise de fonds minimale est de 5 %, et les chiffres ci-dessous supposent qu\u2019aucune prime n\u2019est ajoutée.',
+    warnBelow20: 'Mise de fonds inférieure à 20 % \u2014 vous devrez habiter une des unités, et l\u2019assurance hypothécaire de la SCHL s\u2019appliquera.',
+    rentNoteWarning: 'Dépasse le taux de référence du TAL pour 2026 (~3,1 %) pour le renouvellement des baux (la fourchette réelle se situe entre environ 2,7 % et 7,3 % selon le mode de chauffage). Un locataire en place peut refuser et exiger une audience de fixation de loyer au TAL au-delà de ce seuil \u2014 considérez ce taux comme réaliste surtout lors d\u2019un changement de locataire, pas d\u2019un renouvellement.',
+    footerTitle: 'Hypothèses intégrées à ce registre :',
+    note1: 'Le loyer croît au taux annuel que vous fixez; les dépenses d\u2019exploitation restent fixes pendant toute la détention — aucune inflation des dépenses.',
+    note2: 'L\u2019intérêt hypothécaire sur le prêt principal et sur tout montant refinancé est considéré comme entièrement déductible du revenu locatif de cette propriété à votre taux marginal; cela suppose que vous avez d\u2019autres revenus pour absorber les pertes des premières années.',
+    note3: 'Le montant refinancé est modélisé comme une dette à intérêt seulement garantie par l\u2019autre immeuble — son solde ne change jamais ici, et il n\u2019est pas remboursé à partir du produit de vente de cette propriété.',
+    note4: 'La déduction pour amortissement (DPA) n\u2019est pas prise en compte dans le calcul fiscal.',
+    note5: 'Les frais de vente (commission d\u2019agent, frais juridiques, etc.) ne sont pas inclus dans les chiffres de revente.',
+    note6: 'L\u2019impôt sur les gains en capital à la revente utilise le taux d\u2019inclusion ci-dessus multiplié par votre taux marginal — une simplification des règles canadiennes, pas un conseil fiscal.',
+    note7: 'Les taux de prime d\u2019assurance hypothécaire suivent le barème publié par la SCHL pour les prêts de 1 à 4 logements occupés par le propriétaire. Sous 20 % de mise de fonds, l\u2019outil suppose que vous habiterez une des unités (la seule façon de rendre l\u2019hypothèque assurable) et ajoute automatiquement la prime de la SCHL au prêt.',
+    note8: 'Le rendement comptant, le rendement total en %, le ROI et le TRI sont tous mesurés par rapport au comptant réellement investi : la mise de fonds plus toute prime et TVQ non financées, moins le montant refinancé utilisé pour aider à financer l\u2019achat.',
+    note9: 'Le TRI tient compte du moment précis de chaque flux de trésorerie annuel ainsi que du produit net à la revente — un rendement annualisé véritable, pas une simple moyenne.',
+    note10: 'Rien de tout cela ne constitue un conseil fiscal ou de prêt — confirmez les règles actuelles avec un courtier hypothécaire ou un comptable avant de vous y fier pour un achat réel.'
+  },
+  zh: {
+    eyebrow: '交易分析器',
+    title: '出租物业投资账册',
+    subtitle: '输入出租物业的各项数据，系统将逐年计算现金回报及总回报（含已还贷款本金所积累的权益），直至出售——涵盖租金增长、抵押贷款保险及以其他物业再融资的杠杆效应。',
+    purchasePrice: '购买价格',
+    downPayment: '首付款',
+    downPaymentTooltip: '首付低于20%时，您需要居住在其中一个单元，贷款才可投保，届时将自动适用CMHC抵押贷款保险，保费将自动计入贷款。',
+    salePrice: '预期售价',
+    resaleYears: '持有年限（至出售）',
+    interestRate: '年利率（%）',
+    loanTermYears: '贷款年限（年）',
+    rent: '租金',
+    rentIncreasePct: '年租金涨幅（%）',
+    propertyTax: '物业税',
+    schoolTax: '教育税',
+    homeInsurance: '房屋保险',
+    condoFee: '公寓管理费',
+    maintenanceFee: '维护／维修费',
+    utilities: '水电煤气费',
+    refinanceAmount: '再融资金额',
+    refinanceAmountTooltip: '以您已持有的另一处物业作抵押借款（纯利息），用于协助支付本次购房款，可减少您需要自行投入的现金。',
+    refinanceRate: '再融资利率（%）',
+    refinanceRateTooltip: '可从本物业租金收入中扣除，因为该借款用于取得收益性资产。',
+    marginalTaxRate: '边际所得税率（%）',
+    capGainsInclusion: '资本利得计入比率（%）',
+    mo: '月', yr: '年',
+    colYear: '年份', groupIncomeExpenses: '收入与支出', groupMortgage: '抵押贷款', groupTax: '税务', groupReturn: '回报',
+    colRent: '租金', colOpEx: '运营支出', colNOI: '净营业收入', colInterest: '利息', colRefiInt: '再融利息',
+    colPrincipal: '本金', colBalance: '贷款余额', colTaxableInc: '应税收入', colTax: '税款',
+    colAfterTaxCF: '税后现金流', colCoC: '现金回报率%', colTotalReturnDollar: '总回报$', colTotalReturnPct: '总回报%',
+    atResale: '出售时', soldYear: '出售年份',
+    saleSalePrice: '售价', saleRemainingBalance: '贷款剩余余额', saleCapitalAppreciation: '资产增值',
+    saleCapGainsTax: '预估资本利得税', saleNetProceeds: '净售款', saleCashFlowHold: '持有期间现金流合计',
+    saleEquityBuilt: '已积累权益（已还本金）', saleTotalProfit: '总利润', saleOverallROI: '综合投资回报率',
+    cardMonthlyPI: '月供（本息）', cardCMHC: 'CMHC保险', cardCashInvested: '自付现金总额',
+    cardCashFlowY1: '第1年现金流', cardAfterTaxCFY1: '第1年税后现金流', cardCoCY1: '第1年现金回报率',
+    cardTotalReturnDollarY1: '第1年总回报$', cardTotalReturnPctY1: '第1年总回报%',
+    irrLabel: '内部回报率', irrNA: '内部回报率 无', na: '无',
+    warnBelow5: '首付低于5%（贷款价值比超过95%）不可投保——最低首付为5%，以下数据假设不计入任何保费。',
+    warnBelow20: '首付低于20%——您需要居住在其中一个单元，且CMHC抵押贷款保险将适用。',
+    rentNoteWarning: '超过魁北克2026年TAL续租参考利率（约3.1%，实际区间约为2.7%至7.3%，视供暖方式而定）。在租租户可拒绝并申请TAL裁定租金——此涨幅主要适用于租客更换时，不适用于续租。',
+    footerTitle: '本账册内置假设说明：',
+    note1: '租金按您设定的年增长率递增；运营支出在整个持有期间保持不变——不含支出通胀。',
+    note2: '主贷款及再融资金额的抵押贷款利息均视为可全额抵扣本物业的租金收入，按您的边际税率计算；此假设前提是您有其他收入可在前期亏损时抵扣。',
+    note3: '再融资金额以另一处物业为抵押，按纯利息债务处理——其余额在本账册中保持不变，且不从本物业的出售所得中偿还。',
+    note4: '资本成本扣除（折旧）未纳入税务计算。',
+    note5: '出售成本（代理佣金、法律费用等）不含于转售数据中。',
+    note6: '出售时的资本利得税按上方设定的计入比率乘以边际税率计算——这是对加拿大规则的简化，并非税务建议。',
+    note7: '抵押贷款保险费率依据CMHC针对业主自住1至4个单元物业发布的费率表计算。首付低于20%时，工具假设您将居住在其中一个单元（这是贷款可投保的唯一方式），并自动将CMHC保费计入贷款。',
+    note8: '现金回报率、总回报%、投资回报率及内部回报率均以实际自付现金为基准：首付款加上任何未融资的保费及QST，减去用于协助支付本次购房的再融资金额。',
+    note9: '内部回报率考虑了每年现金流的时间价值及出售时的净所得——是真实的年化回报，而非简单平均值。',
+    note10: '以上内容均不构成税务或贷款建议——在实际购房前，请向抵押贷款经纪人或会计师确认现行规定。'
+  },
+  es: {
+    eyebrow: 'Analizador de transacción',
+    title: 'Registro de inversión inmobiliaria en alquiler',
+    subtitle: 'Ingrese los datos de una propiedad de alquiler y el sistema calculará el rendimiento de caja y el rendimiento total año a año (incluido el capital hipotecario amortizado como patrimonio acumulado) hasta la reventa — considerando el aumento de alquiler, el seguro hipotecario y el apalancamiento por refinanciamiento de otra propiedad.',
+    purchasePrice: 'Precio de compra',
+    downPayment: 'Pago inicial',
+    downPaymentTooltip: 'Con menos del 20% de pago inicial, deberá vivir en una de las unidades para que la hipoteca sea asegurable, y se aplicará el seguro hipotecario de la CMHC — la prima se agrega automáticamente a su préstamo.',
+    salePrice: 'Precio de venta esperado',
+    resaleYears: 'Años hasta la reventa',
+    interestRate: 'Tasa de interés anual (%)',
+    loanTermYears: 'Plazo del préstamo (años)',
+    rent: 'Alquiler',
+    rentIncreasePct: 'Aumento anual del alquiler (%)',
+    propertyTax: 'Impuesto predial',
+    schoolTax: 'Impuesto escolar',
+    homeInsurance: 'Seguro de hogar',
+    condoFee: 'Cuota de condominio',
+    maintenanceFee: 'Mantenimiento / Reparaciones',
+    utilities: 'Servicios públicos',
+    refinanceAmount: 'Monto refinanciado',
+    refinanceAmountTooltip: 'Tratado como un préstamo a solo interés contra otra propiedad que ya posee, para ayudar a financiar esta compra. Reduce el efectivo que usted necesita aportar personalmente.',
+    refinanceRate: 'Tasa de interés del refinanciamiento (%)',
+    refinanceRateTooltip: 'Deducible del ingreso por alquiler de esta propiedad, ya que es dinero prestado para adquirir un activo generador de ingresos.',
+    marginalTaxRate: 'Tasa marginal del impuesto sobre la renta (%)',
+    capGainsInclusion: 'Tasa de inclusión de ganancias de capital (%)',
+    mo: 'Mes', yr: 'Año',
+    colYear: 'Año', groupIncomeExpenses: 'Ingresos y gastos', groupMortgage: 'Hipoteca', groupTax: 'Impuesto', groupReturn: 'Rendimiento',
+    colRent: 'Alquiler', colOpEx: 'Gastos oper.', colNOI: 'INO', colInterest: 'Interés', colRefiInt: 'Int. refi.',
+    colPrincipal: 'Capital', colBalance: 'Saldo', colTaxableInc: 'Ingr. imponible', colTax: 'Impuesto',
+    colAfterTaxCF: 'FE neto de imp.', colCoC: 'Rend. ef. %', colTotalReturnDollar: 'Rend. total $', colTotalReturnPct: 'Rend. total %',
+    atResale: 'En la reventa', soldYear: 'Año de venta',
+    saleSalePrice: 'Precio de venta', saleRemainingBalance: 'Saldo restante del préstamo', saleCapitalAppreciation: 'Apreciación de capital',
+    saleCapGainsTax: 'Impuesto est. ganancias de capital', saleNetProceeds: 'Ingresos netos de la venta', saleCashFlowHold: 'Flujo de caja total durante la tenencia',
+    saleEquityBuilt: 'Patrimonio acumulado (capital pagado)', saleTotalProfit: 'Beneficio total', saleOverallROI: 'ROI global',
+    cardMonthlyPI: 'Cuota mensual (C+I)', cardCMHC: 'Seguro CMHC', cardCashInvested: 'Efectivo total invertido',
+    cardCashFlowY1: 'Flujo de caja Año 1', cardAfterTaxCFY1: 'FE neto imp. Año 1', cardCoCY1: 'Rend. sobre efectivo (Año 1)',
+    cardTotalReturnDollarY1: 'Rend. total $ Año 1', cardTotalReturnPctY1: 'Rend. total % Año 1',
+    irrLabel: 'TIR', irrNA: 'TIR n/d', na: 'n/d',
+    warnBelow5: 'Un pago inicial inferior al 5% (más del 95% de relación préstamo-valor) no es asegurable — el pago inicial mínimo es del 5%, y los datos a continuación asumen que no se agrega ninguna prima.',
+    warnBelow20: 'Pago inicial inferior al 20% — deberá vivir en una de las unidades y se aplicará el seguro hipotecario de la CMHC.',
+    rentNoteWarning: 'Supera la tasa de referencia del TAL de Quebec para 2026 (~3,1 %) para la renovación de arrendamientos (la banda real va de aproximadamente 2,7% a 7,3% según el tipo de calefacción). Un inquilino actual puede negarse y solicitar una audiencia de fijación de renta ante el TAL — considere esta tasa como realista principalmente en cambio de inquilino, no en renovación.',
+    footerTitle: 'Supuestos integrados en este registro:',
+    note1: 'El alquiler crece a la tasa anual que usted establece; los gastos operativos se mantienen fijos durante todo el período de tenencia — sin inflación de gastos.',
+    note2: 'El interés hipotecario del préstamo principal y de cualquier monto refinanciado se trata como totalmente deducible del ingreso por alquiler de esta propiedad a su tasa marginal; esto asume que tiene otros ingresos para compensar las pérdidas en los primeros años.',
+    note3: 'El monto refinanciado se modela como deuda a solo interés garantizada por el otro inmueble — su saldo nunca cambia aquí y no se repaga con los ingresos de venta de esta propiedad.',
+    note4: 'La depreciación de activos (CCA) no se incluye en el cálculo fiscal.',
+    note5: 'Los costos de venta (comisión de agente, honorarios legales, etc.) no están incluidos en los datos de reventa.',
+    note6: 'El impuesto sobre ganancias de capital en la reventa usa la tasa de inclusión indicada multiplicada por su tasa marginal — una simplificación de las normas canadienses, no asesoramiento fiscal.',
+    note7: 'Las primas del seguro hipotecario siguen el baremo publicado por la CMHC para préstamos de 1 a 4 unidades ocupadas por el propietario. Con menos del 20% de pago inicial, la herramienta asume que vivirá en una de las unidades (único modo de hacer la hipoteca asegurable) y agrega automáticamente la prima al préstamo.',
+    note8: 'El rendimiento sobre efectivo, el rendimiento total %, el ROI y la TIR se miden en relación al efectivo real invertido: pago inicial más cualquier prima y QST no financiados, menos el monto refinanciado.',
+    note9: 'La TIR considera el momento de cada flujo de caja anual más los ingresos netos en la reventa — un rendimiento anualizado real, no un simple promedio.',
+    note10: 'Nada de esto constituye asesoramiento fiscal o crediticio — confirme las normas vigentes con un agente hipotecario o contador antes de utilizarlo en una compra real.'
+  }
+};
+let currentLang = 'en';
+function t(key){ return (translations[currentLang] && translations[currentLang][key]) || translations.en[key] || key; }
+function applyStaticI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.documentElement.lang = currentLang;
+  document.title = t('title');
+}
+function setLanguage(lang){
+  currentLang = lang;
+  document.querySelectorAll('#langPill button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  applyStaticI18n();
+  recalc();
+}
+document.querySelectorAll('#langPill button').forEach(b => {
+  b.addEventListener('click', () => setLanguage(b.dataset.lang));
+});
+
 function val(id){ return parseFloat(document.getElementById(id).value) || 0; }
 function period(name){ const el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : 'year'; }
 function toAnnual(v, p){ return p === 'month' ? v * 12 : v; }
 
 function fmtMoney(n, colorize){
-  if(n === null || n === undefined || isNaN(n)) return 'n/a';
+  if(n === null || n === undefined || isNaN(n)) return t('na');
   const neg = n < 0;
   const abs = Math.abs(Math.round(n));
   const s = '$' + abs.toLocaleString('en-US');
@@ -387,7 +636,7 @@ function fmtMoney(n, colorize){
   return '<span class="' + (neg ? 'neg' : 'pos') + '">' + out + '</span>';
 }
 function fmtPct(n, colorize){
-  if(n === null || n === undefined || isNaN(n)) return 'n/a';
+  if(n === null || n === undefined || isNaN(n)) return t('na');
   const out = n.toFixed(1) + '%';
   if(!colorize) return out;
   return '<span class="' + (n < 0 ? 'neg' : 'pos') + '">' + out + '</span>';
@@ -441,7 +690,7 @@ function recalc(){
   const rentNote = document.getElementById('rentIncreaseNote');
   const TAL_REFERENCE_BASELINE = 3.1; // 2026 TAL average CPI-based reference rate for lease renewals
   if(rentIncreasePct > TAL_REFERENCE_BASELINE){
-    rentNote.textContent = 'Above Quebec\u2019s ~3.1% 2026 TAL reference rate for lease renewals (the actual band runs roughly 2.7%\u20137.3% depending on heating type). A sitting tenant can refuse and force a TAL rent-fixing hearing above this \u2014 treat this rate as realistic mainly on tenant turnover, not a renewal.';
+    rentNote.textContent = t('rentNoteWarning');
     rentNote.classList.add('show');
   } else {
     rentNote.classList.remove('show');
@@ -469,11 +718,11 @@ function recalc(){
   if(needsInsurance){
     premiumRate = ownerPremiumRate(ltv);
     if(premiumRate === null){
-      warningText = 'A down payment below 5% (over 95% loan-to-value) isn\u2019t insurable — minimum down payment is 5%, and the numbers below assume no premium is added.';
+      warningText = t('warnBelow5');
     } else {
       premiumAmount = baseLoanAmount * premiumRate / 100;
       qstAmount = premiumAmount * 0.09975;
-      warningText = 'Less than 20% down payment \u2014 you\u2019ll need to live in one of the units, and CMHC mortgage insurance will apply.';
+      warningText = t('warnBelow20');
     }
   }
 
@@ -542,14 +791,14 @@ function recalc(){
 
   const summaryRow = document.getElementById('summaryRow');
   summaryRow.innerHTML = [
-    card('Monthly P&amp;I', fmtMoney(monthlyPayment)),
-    card('CMHC Insurance', premiumAmount > 0 ? fmtMoney(premiumAmount) : 'n/a'),
-    card('Total Cash Invested', fmtMoney(cashInvested)),
-    card('Cash Flow Y1', fmtMoney(cashFlowY1, true)),
-    card('After-Tax CF Y1', fmtMoney(years[0].afterTaxCF, true)),
-    card('Cash-on-Cash (Yr 1)', fmtPct(coc[0], true), coc[0] !== null && coc[0] >= 0 ? 'green' : (coc[0] !== null ? 'red' : '')),
-    card('Total Return $ Y1', fmtMoney(years[0].totalReturn, true)),
-    card('Total Return % Y1', fmtPct(totalReturnPct[0], true))
+    card(t('cardMonthlyPI'), fmtMoney(monthlyPayment)),
+    card(t('cardCMHC'), premiumAmount > 0 ? fmtMoney(premiumAmount) : t('na')),
+    card(t('cardCashInvested'), fmtMoney(cashInvested)),
+    card(t('cardCashFlowY1'), fmtMoney(cashFlowY1, true)),
+    card(t('cardAfterTaxCFY1'), fmtMoney(years[0].afterTaxCF, true)),
+    card(t('cardCoCY1'), fmtPct(coc[0], true), coc[0] !== null && coc[0] >= 0 ? 'green' : (coc[0] !== null ? 'red' : '')),
+    card(t('cardTotalReturnDollarY1'), fmtMoney(years[0].totalReturn, true)),
+    card(t('cardTotalReturnPctY1'), fmtPct(totalReturnPct[0], true))
   ].join('');
 
   // ---- table ----
@@ -592,19 +841,19 @@ function recalc(){
 
   const saleNumbers = document.getElementById('saleNumbers');
   saleNumbers.innerHTML = [
-    saleStat('Sale Price', fmtMoney(salePrice)),
-    saleStat('Remaining Loan Balance', fmtMoney(remainingBalance)),
-    saleStat('Capital Appreciation', fmtMoney(capitalAppreciation, true)),
-    saleStat('Est. Capital Gains Tax', fmtMoney(capGainsTax)),
-    saleStat('Net Sale Proceeds', fmtMoney(netSaleProceeds)),
-    saleStat('Total Cash Flow During Hold', fmtMoney(totalCashFlowOverHold, true)),
-    saleStat('Equity Built (Principal Paid)', fmtMoney(totalPrincipalPaid)),
-    saleStat('Total Profit', fmtMoney(totalProfit, true)),
-    saleStat('Overall ROI', fmtPct(overallROI, true))
+    saleStat(t('saleSalePrice'), fmtMoney(salePrice)),
+    saleStat(t('saleRemainingBalance'), fmtMoney(remainingBalance)),
+    saleStat(t('saleCapitalAppreciation'), fmtMoney(capitalAppreciation, true)),
+    saleStat(t('saleCapGainsTax'), fmtMoney(capGainsTax)),
+    saleStat(t('saleNetProceeds'), fmtMoney(netSaleProceeds)),
+    saleStat(t('saleCashFlowHold'), fmtMoney(totalCashFlowOverHold, true)),
+    saleStat(t('saleEquityBuilt'), fmtMoney(totalPrincipalPaid)),
+    saleStat(t('saleTotalProfit'), fmtMoney(totalProfit, true)),
+    saleStat(t('saleOverallROI'), fmtPct(overallROI, true))
   ].join('');
 
   document.getElementById('stampYear').textContent = resaleYears;
-  document.getElementById('stampIrr').textContent = irrRate === null ? 'IRR n/a' : 'IRR ' + (irrRate * 100).toFixed(1) + '%';
+  document.getElementById('stampIrr').textContent = irrRate === null ? t('irrNA') : t('irrLabel') + ' ' + (irrRate * 100).toFixed(1) + '%';
   const stampBox = document.getElementById('stampBox');
   stampBox.className = 'stamp' + (irrRate !== null && irrRate >= 0 ? ' green' : '');
 }
@@ -630,6 +879,7 @@ document.addEventListener('click', () => {
 
 document.getElementById('dealForm').addEventListener('input', recalc);
 document.getElementById('dealForm').addEventListener('change', recalc);
+applyStaticI18n();
 recalc();
 </script>
 </body>
