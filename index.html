@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* Core palette — light mode */
     --ink:#1c1f26;
     --ink-soft:#2a2e37;
     --paper:#f6f5f0;
@@ -19,7 +20,63 @@
     --red:#a8392f;
     --red-bright:#ff6b6b;
     --gold:#c9952c;
+    /* Component overrides — light mode */
+    --field-bg:#fff;
+    --sale-bg:#fff;
+    --table-odd:#fff;
+    --table-even:var(--paper-alt);
+    --warning-bg:#fbeee9;
+    --warning-border:#e3b8a4;
+    --warning-text:#7a3420;
+    /* Summary cards — light mode: dark card on light page */
+    --card-bg:#1c1f26;
+    --card-label:#a0a6b0;
+    --card-value:#f0eee8;
+    --card-pos:#4ade80;
+    --card-neg:#ff6b6b;
+    /* Table value colours — light mode: dark on light row */
+    --val-pos:#1f7a5c;
+    --val-neg:#a8392f;
+    /* Tooltip */
+    --tip-bg:#1c1f26;
+    --tip-text:#f6f5f0;
   }
+
+  body.dark{
+    /* Core palette — dark mode: muted, easy on eyes */
+    --ink:#c4c9d4;          /* primary body text: soft off-white, not pure white */
+    --ink-soft:#252b38;     /* nav/header backgrounds */
+    --paper:#181d27;        /* page background: deep navy */
+    --paper-alt:#1e2435;    /* alternate row: slightly lighter */
+    --line:#2a3044;         /* borders: subtle dark */
+    --slate:#6b748a;        /* secondary text */
+    --green:#1f7a5c;
+    --green-bright:#5ec98f; /* slightly muted vs pure bright */
+    --red:#8f3030;
+    --red-bright:#e07878;   /* softer red */
+    --gold:#c49535;
+    /* Component overrides — dark mode */
+    --field-bg:#1e2435;
+    --sale-bg:#1e2435;
+    --table-odd:#1e2435;
+    --table-even:#181d27;
+    --warning-bg:#2a1a14;
+    --warning-border:#6b3020;
+    --warning-text:#e09070;
+    /* Summary cards — dark mode: subtle elevated surface, no harsh contrast */
+    --card-bg:#252b3a;      /* slightly lighter than page bg, not black */
+    --card-label:#5e6880;   /* muted label */
+    --card-value:#b0b8cc;   /* readable soft blue-grey, not white */
+    --card-pos:#5ec98f;     /* softer green */
+    --card-neg:#e07878;     /* softer red */
+    /* Table value colours — dark mode: visible on dark rows */
+    --val-pos:#5ec98f;
+    --val-neg:#e07878;
+    /* Tooltip */
+    --tip-bg:#252b3a;
+    --tip-text:#c4c9d4;
+  }
+
   *{box-sizing:border-box;}
   body{
     margin:0;
@@ -27,6 +84,7 @@
     color:var(--ink);
     font-family:'IBM Plex Sans',sans-serif;
     line-height:1.45;
+    transition:background .2s, color .2s;
   }
   .wrap{max-width:1220px;margin:0 auto;padding:32px 20px 80px;}
 
@@ -38,7 +96,7 @@
     font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;
     color:var(--slate);transition:background .1s, color .1s;
   }
-  .lang-pill button.active{background:var(--ink);color:var(--paper);}
+  .lang-pill button.active{background:var(--ink-soft);color:var(--card-value);}
   .eyebrow{
     font-family:'IBM Plex Mono',monospace;letter-spacing:.18em;text-transform:uppercase;
     font-size:.72rem;color:var(--gold);font-weight:600;
@@ -46,9 +104,10 @@
   h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;margin:.35rem 0 .5rem;letter-spacing:-0.01em;}
   .sub{color:var(--slate);font-size:.92rem;max-width:640px;}
 
-  /* ---- form: every field flows left-to-right, 6 per row ---- */
+  /* ---- form ---- */
   .ledger-sheet{
-    background:#fff;border:1px solid var(--line);border-radius:6px;margin-bottom:28px;
+    background:var(--field-bg);border:1px solid var(--line);border-radius:6px;margin-bottom:28px;
+    transition:background .2s;
   }
   .field-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
   @media (max-width:700px){ .field-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
@@ -74,10 +133,10 @@
     text-transform:none;letter-spacing:0;cursor:pointer;color:var(--slate);font-weight:500;
     transition:background .1s, color .1s;
   }
-  .pill input:checked + label{background:var(--slate);color:var(--paper);font-weight:700;}
+  .pill input:checked + label{background:var(--slate);color:var(--field-bg);font-weight:700;}
 
   .hint{font-size:.7rem;color:var(--slate);margin-top:6px;line-height:1.3;}
-  .hint.warn{color:var(--red);font-weight:600;display:none;}
+  .hint.warn{color:var(--red-bright);font-weight:600;display:none;}
   .hint.warn.show{display:block;}
 
   .qmark{
@@ -86,10 +145,10 @@
     font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:700;
     cursor:help;position:relative;margin-left:6px;flex-shrink:0;vertical-align:middle;
   }
-  .qmark.on-dark{background:var(--gold);color:var(--ink);}
+  .qmark.on-dark{background:var(--gold);color:var(--field-bg);}
   .qmark .tooltip{
     display:none;position:absolute;bottom:140%;left:50%;transform:translateX(-50%);
-    width:230px;background:var(--ink);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;
+    width:230px;background:var(--tip-bg);color:var(--tip-text);font-family:'IBM Plex Sans',sans-serif;
     font-size:.72rem;font-weight:400;line-height:1.4;padding:9px 11px;border-radius:6px;
     z-index:20;text-align:left;text-transform:none;letter-spacing:normal;
   }
@@ -97,55 +156,56 @@
 
   /* ---- warning banner ---- */
   .warning-banner{
-    background:#fbeee9;border-top:1px solid #e3b8a4;border-bottom:1px solid #e3b8a4;
-    color:#7a3420;padding:12px 16px;font-size:.82rem;display:none;
+    background:var(--warning-bg);border-top:1px solid var(--warning-border);border-bottom:1px solid var(--warning-border);
+    color:var(--warning-text);padding:12px 16px;font-size:.82rem;display:none;
   }
   .warning-banner.show{display:block;}
   .warning-banner strong{font-family:'Space Grotesk',sans-serif;}
 
-  /* ---- summary cards ---- */
+  /* ---- summary cards — uses card-specific variables to decouple from page --ink/--paper ---- */
   .summary-row{
     display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
     gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:28px;border-radius:6px;overflow:hidden;
   }
-  .summary-card{background:var(--ink);padding:18px 16px;}
+  .summary-card{background:var(--card-bg);padding:18px 16px;transition:background .2s;}
   .summary-card .label{
     font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;
-    letter-spacing:.08em;color:var(--paper);
+    letter-spacing:.08em;color:var(--card-label);
   }
-  .summary-card .value{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--paper);margin-top:4px;}
-  .summary-card .value.green{color:var(--green-bright);}
-  .summary-card .value.red{color:var(--red-bright);}
+  .summary-card .value{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--card-value);margin-top:4px;}
+  .summary-card .value.green{color:var(--card-pos);}
+  .summary-card .value.red{color:var(--card-neg);}
   .summary-card .value.small{font-size:1.05rem;}
-  .summary-card .value .pos{color:var(--green-bright);}
-  .summary-card .value .neg{color:var(--red-bright);}
+  .summary-card .value .pos{color:var(--card-pos);}
+  .summary-card .value .neg{color:var(--card-neg);}
 
   /* ---- table ---- */
   .table-wrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:28px;border-radius:6px;}
   table{border-collapse:collapse;width:100%;min-width:1140px;font-family:'IBM Plex Mono',monospace;font-size:.8rem;}
-  thead th{font-weight:500;padding:7px 9px;border-left:1px solid #3a3e47;white-space:nowrap;}
+  thead th{font-weight:500;padding:7px 9px;border-left:1px solid var(--line);white-space:nowrap;}
   thead tr.group-header th{
-    background:var(--ink);color:var(--gold);font-family:'IBM Plex Sans',sans-serif;
+    background:var(--card-bg);color:var(--gold);font-family:'IBM Plex Sans',sans-serif;
     font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;text-align:center;
   }
-  thead tr.col-header th{background:var(--ink-soft);color:var(--paper);text-align:right;}
+  thead tr.col-header th{background:var(--ink-soft);color:var(--card-value);text-align:right;}
   thead tr.col-header th:first-child{text-align:left;}
   thead tr.group-header th:first-child{border-left:none;}
   thead tr.col-header th:first-child{border-left:none;}
   tbody td{padding:6px 9px;text-align:right;border-top:1px solid var(--line);white-space:nowrap;}
   tbody tr:nth-child(even){background:var(--paper-alt);}
-  tbody tr:nth-child(odd){background:#fff;}
+  tbody tr:nth-child(odd){background:var(--table-odd);}
   td.year{
     font-weight:600;font-family:'Space Grotesk',sans-serif;text-align:left;
     position:sticky;left:0;background:inherit;
   }
-  .neg{color:var(--red);}
-  .pos{color:var(--green);}
+  .neg{color:var(--val-neg);}
+  .pos{color:var(--val-pos);}
 
   /* ---- sale summary ---- */
   .sale-summary{
-    position:relative;background:#fff;border:1px solid var(--line);border-radius:6px;
+    position:relative;background:var(--sale-bg);border:1px solid var(--line);border-radius:6px;
     padding:26px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-bottom:28px;
+    transition:background .2s;
   }
   .sale-summary h2{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;margin:0 0 16px;}
   .sale-numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;}
@@ -153,12 +213,12 @@
   .sale-numbers .value{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin-top:2px;}
 
   .stamp{
-    width:138px;height:138px;border:3px double var(--red);border-radius:50%;
+    width:138px;height:138px;border:3px double var(--red-bright);border-radius:50%;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transform:rotate(-9deg);color:var(--red);font-family:'IBM Plex Mono',monospace;
+    transform:rotate(-9deg);color:var(--red-bright);font-family:'IBM Plex Mono',monospace;
     text-transform:uppercase;text-align:center;opacity:.88;flex-shrink:0;
   }
-  .stamp.green{border-color:var(--green);color:var(--green);}
+  .stamp.green{border-color:var(--green-bright);color:var(--green-bright);}
   .stamp .t1{font-size:.6rem;letter-spacing:.08em;}
   .stamp .t2{font-size:1.25rem;font-weight:700;font-family:'Space Grotesk',sans-serif;line-height:1.1;margin:2px 0;}
   .stamp .t3{font-size:.6rem;}
@@ -183,11 +243,19 @@
       <h1 data-i18n="title">Rental Property Deal Ledger</h1>
       <p class="sub" data-i18n="subtitle">Enter the numbers for a rental property and this works out the year-by-year cash return and total return (including mortgage principal paid down as equity built) through to resale — with rent escalation, mortgage insurance, and refinance leverage from another property factored in.</p>
     </div>
-    <div class="lang-pill" id="langPill">
-      <button type="button" data-lang="en" class="active">EN</button>
-      <button type="button" data-lang="fr">FR</button>
-      <button type="button" data-lang="zh">中文</button>
-      <button type="button" data-lang="es">ES</button>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0;">
+      <div class="lang-pill" id="langPill">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="fr">FR</button>
+        <button type="button" data-lang="zh">中文</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+      <button type="button" id="themeToggle" style="
+        border:1px solid var(--line);border-radius:999px;background:transparent;
+        cursor:pointer;padding:6px 14px;font-family:'IBM Plex Mono',monospace;
+        font-size:.72rem;font-weight:600;color:var(--slate);
+        display:flex;align-items:center;gap:6px;transition:background .15s,color .15s;
+      ">🌙 Dark</button>
     </div>
   </header>
 
@@ -317,11 +385,55 @@
       </div>
       <div class="field">
         <label for="refinanceAmount"><span data-i18n="refinanceAmount">Refinanced Amount</span><span class="qmark">?<span class="tooltip" data-i18n="refinanceAmountTooltip">Treated as interest-only money you borrow against another property you already own, to help fund this purchase. It reduces the cash you personally need to put in.</span></span></label>
-        <div class="row"><input type="number" id="refinanceAmount" value="0" min="0" step="1000"></div>
+        <div class="row">
+          <input type="number" id="refinanceAmount" value="0" min="0" step="1000">
+          <div class="pill">
+            <input type="radio" name="refinanceAmountType" id="refiDollar" value="amount" checked>
+            <label for="refiDollar">$</label>
+            <input type="radio" name="refinanceAmountType" id="refiPercent" value="percent">
+            <label for="refiPercent">%</label>
+          </div>
+        </div>
       </div>
       <div class="field">
         <label for="refinanceRate"><span data-i18n="refinanceRate">Refinanced Interest Rate (%)</span><span class="qmark">?<span class="tooltip" data-i18n="refinanceRateTooltip">Deductible against this property's rental income, since it's money borrowed to acquire an income-producing asset.</span></span></label>
         <div class="row"><input type="number" id="refinanceRate" value="7" min="0" step="0.05"></div>
+      </div>
+      <div class="field">
+        <label for="refinanceLoanTerm" data-i18n="refinanceLoanTerm">Refi Loan Term (years)</label>
+        <div class="row"><input type="number" id="refinanceLoanTerm" value="25" min="1" step="1"></div>
+      </div>
+      <div class="field">
+        <label for="agentCommission"><span data-i18n="agentCommission">Agent Commission (at sale)</span><span class="qmark">?<span class="tooltip" data-i18n="agentCommissionTooltip">Selling cost deducted from sale proceeds at resale. Enter as % of sale price or a fixed $ amount.</span></span></label>
+        <div class="row">
+          <input type="number" id="agentCommission" value="5" min="0" step="0.1">
+          <div class="pill">
+            <input type="radio" name="agentCommissionType" id="agentPct" value="percent" checked>
+            <label for="agentPct">%</label>
+            <input type="radio" name="agentCommissionType" id="agentDollar" value="amount">
+            <label for="agentDollar">$</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="inspectionFee" data-i18n="inspectionFee">Inspection Fee (buying)</label>
+        <div class="row"><input type="number" id="inspectionFee" value="500" min="0" step="50"></div>
+      </div>
+      <div class="field">
+        <label for="notaryFee" data-i18n="notaryFee">Notary Fee (buying)</label>
+        <div class="row"><input type="number" id="notaryFee" value="1500" min="0" step="100"></div>
+      </div>
+      <div class="field">
+        <label><span data-i18n="welcomeTaxLabel">Welcome Tax — Taxe de bienvenue</span><span class="qmark">?<span class="tooltip" data-i18n="welcomeTaxTooltip">QC 2026 general: 0.5% on first $62,900 / 1% up to $315,000 / 1.5% above. Montreal adds: 2% over $500K / 2.5% over $1M / 3% over $2M / 4% over $3M. Select the city below — tax is calculated automatically.</span></span></label>
+        <div class="row" style="margin-bottom:6px">
+          <div class="pill">
+            <input type="radio" name="welcomeTaxCity" id="wtGeneral" value="general" checked>
+            <label for="wtGeneral" data-i18n="wtGeneral">General QC</label>
+            <input type="radio" name="welcomeTaxCity" id="wtMontreal" value="montreal">
+            <label for="wtMontreal" data-i18n="wtMontreal">Montréal</label>
+          </div>
+        </div>
+        <div class="row" style="padding:4px 0"><strong id="welcomeTaxDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:1rem;color:var(--ink)">—</strong></div>
       </div>
       <div class="field">
         <label for="marginalTaxRate" data-i18n="marginalTaxRate">Marginal Income Tax Rate (%)</label>
@@ -343,13 +455,13 @@
         <tr class="group-header">
           <th rowspan="2" data-i18n="colYear">Year</th>
           <th colspan="3" data-i18n="groupIncomeExpenses">Income &amp; Expenses</th>
-          <th colspan="4" data-i18n="groupMortgage">Mortgage</th>
+          <th colspan="6" data-i18n="groupMortgage">Mortgage</th>
           <th colspan="2" data-i18n="groupTax">Tax</th>
           <th colspan="4" data-i18n="groupReturn">Return</th>
         </tr>
         <tr class="col-header">
           <th data-i18n="colRent">Rent</th><th data-i18n="colOpEx">Op. Exp</th><th data-i18n="colNOI">NOI</th>
-          <th data-i18n="colInterest">Interest</th><th data-i18n="colRefiInt">Refi Int.</th><th data-i18n="colPrincipal">Principal</th><th data-i18n="colBalance">Balance</th>
+          <th data-i18n="colInterest">Interest</th><th data-i18n="colRefiInt">Refi Int.</th><th data-i18n="colRefiPrincipal">Refi Principal</th><th data-i18n="colRefiBalance">Refi Balance</th><th data-i18n="colPrincipal">Principal</th><th data-i18n="colBalance">Loan Balance</th>
           <th data-i18n="colTaxableInc">Taxable Inc.</th><th data-i18n="colTax">Tax</th>
           <th data-i18n="colAfterTaxCF">After-Tax CF</th><th data-i18n="colCoC">CoC %</th><th data-i18n="colTotalReturnDollar">Total Return $</th><th data-i18n="colTotalReturnPct">Total Return %</th>
         </tr>
@@ -375,7 +487,7 @@
     <ul>
       <li data-i18n="note1">Rent grows at the annual rate you set; operating expenses are held flat for the whole hold — no expense inflation.</li>
       <li data-i18n="note2">Mortgage interest on both the primary loan and any refinance amount is treated as fully deductible against this property's rental income at your marginal rate; this assumes you have other income for losses to offset against in early years.</li>
-      <li data-i18n="note3">The refinanced amount is modelled as interest-only debt secured against the other building — its balance never changes here, and it isn't repaid out of this property's sale proceeds.</li>
+      <li data-i18n="note3">The refinanced amount amortizes like a regular loan over the term you set. Its interest is deductible against this property's rental income; its principal payments are cash outflows here but build equity in your other property, not this one — so they reduce after-tax cash flow but are not counted as equity built here.</li>
       <li data-i18n="note4">Capital Cost Allowance (depreciation) is not factored into the tax calculation.</li>
       <li data-i18n="note5">Selling costs (agent commission, legal fees, etc.) are not included in the resale numbers.</li>
       <li data-i18n="note6">Capital gains tax at resale uses the inclusion rate above multiplied by your marginal rate — a simplification of Canadian rules, not tax advice.</li>
@@ -418,7 +530,7 @@ const translations = {
     mo: 'Mo', yr: 'Yr',
     colYear: 'Year', groupIncomeExpenses: 'Income & Expenses', groupMortgage: 'Mortgage', groupTax: 'Tax', groupReturn: 'Return',
     colRent: 'Rent', colOpEx: 'Op. Exp', colNOI: 'NOI', colInterest: 'Interest', colRefiInt: 'Refi Int.',
-    colPrincipal: 'Principal', colBalance: 'Balance', colTaxableInc: 'Taxable Inc.', colTax: 'Tax',
+    colPrincipal: 'Principal', colRefiPrincipal: 'Refi Principal', colRefiBalance: 'Refi Balance', colBalance: 'Loan Balance', colTaxableInc: 'Taxable Inc.', colTax: 'Tax',
     colAfterTaxCF: 'After-Tax CF', colCoC: 'CoC %', colTotalReturnDollar: 'Total Return $', colTotalReturnPct: 'Total Return %',
     atResale: 'At Resale', soldYear: 'Sold Year',
     saleSalePrice: 'Sale Price', saleRemainingBalance: 'Remaining Loan Balance', saleCapitalAppreciation: 'Capital Appreciation',
@@ -441,7 +553,19 @@ const translations = {
     note7: 'Mortgage insurance premium rates follow CMHC\u2019s published schedule for owner-occupied 1–4 unit loans. Below 20% down, the tool assumes you\u2019ll live in one of the units (the only way the mortgage is insurable) and adds the CMHC premium to the loan automatically.',
     note8: 'Cash-on-cash, total return %, ROI and IRR are all measured against actual cash invested: down payment plus any unfinanced premium and QST, minus the refinanced amount used to help fund it.',
     note9: 'The IRR accounts for the timing of each year\u2019s cash flow plus the net proceeds at resale — a true annualized return, not just an average.',
-    note10: 'None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.'
+    note10: 'None of this is tax or lending advice — confirm current rules with a mortgage broker or accountant before relying on it for a real purchase.',
+    agentCommission: 'Agent Commission (at sale)',
+    agentCommissionTooltip: 'Selling cost deducted from sale proceeds at resale. Enter as % of sale price or a fixed $ amount.',
+    inspectionFee: 'Inspection Fee (buying)',
+    notaryFee: 'Notary Fee (buying)',
+    welcomeTaxLabel: 'Welcome Tax — Taxe de bienvenue',
+    welcomeTaxTooltip: 'QC 2026 general: 0.5% on first $62,900 / 1% up to $315,000 / 1.5% above. Montreal adds: 2% over $500K / 2.5% over $1M / 3% over $2M / 4% over $3M. Select the city type using the toggle below.',
+    refinanceLoanTerm: 'Refi Loan Term (years)',
+    saleAgentCommission: 'Agent Commission',
+    wtGeneral: 'General QC',
+    wtMontreal: 'Montréal',
+    totalProfitTooltip: 'Total Profit = Equity Built + Total After-Tax Cash Flow + Capital Appreciation − Cap Gains Tax − Agent Commission − Welcome Tax − Inspection Fee − Notary Fee. All one-time buying and selling costs are real cash outflows deducted here. The down payment and refinanced amount are not deducted — those are capital returned to you, not costs.',
+    capGainsTaxTooltip: 'Formula: (Sale Price − ACB − Agent Commission) × Inclusion Rate × Marginal Tax Rate. ACB = Purchase Price + Welcome Tax + Inspection Fee + Notary Fee. Buying costs raise the ACB, reducing the taxable gain.'
   },
   fr: {
     eyebrow: 'Analyseur de transaction',
@@ -471,7 +595,7 @@ const translations = {
     mo: 'Mo', yr: 'An',
     colYear: 'Année', groupIncomeExpenses: 'Revenus et dépenses', groupMortgage: 'Hypothèque', groupTax: 'Impôt', groupReturn: 'Rendement',
     colRent: 'Loyer', colOpEx: 'Dép. expl.', colNOI: 'RNE', colInterest: 'Intérêt', colRefiInt: 'Int. refi.',
-    colPrincipal: 'Capital', colBalance: 'Solde', colTaxableInc: 'Rev. imposable', colTax: 'Impôt',
+    colPrincipal: 'Capital', colRefiPrincipal: 'Capital refi', colRefiBalance: 'Solde refi', colBalance: 'Solde prêt', colTaxableInc: 'Rev. imposable', colTax: 'Impôt',
     colAfterTaxCF: 'FT après impôt', colCoC: 'Rend. MF %', colTotalReturnDollar: 'Rendement total $', colTotalReturnPct: 'Rendement total %',
     atResale: 'À la revente', soldYear: 'Année de vente',
     saleSalePrice: 'Prix de vente', saleRemainingBalance: 'Solde de prêt restant', saleCapitalAppreciation: 'Plus-value (appréciation)',
@@ -487,14 +611,25 @@ const translations = {
     footerTitle: 'Hypothèses intégrées à ce registre :',
     note1: 'Le loyer croît au taux annuel que vous fixez; les dépenses d\u2019exploitation restent fixes pendant toute la détention — aucune inflation des dépenses.',
     note2: 'L\u2019intérêt hypothécaire sur le prêt principal et sur tout montant refinancé est considéré comme entièrement déductible du revenu locatif de cette propriété à votre taux marginal; cela suppose que vous avez d\u2019autres revenus pour absorber les pertes des premières années.',
-    note3: 'Le montant refinancé est modélisé comme une dette à intérêt seulement garantie par l\u2019autre immeuble — son solde ne change jamais ici, et il n\u2019est pas remboursé à partir du produit de vente de cette propriété.',
+    note3: 'Le montant refinancé s\u2019amortit comme un prêt ordinaire sur la durée que vous définissez. Ses intérêts sont déductibles des revenus locatifs; ses remboursements de capital sont des sorties de fonds ici, mais accumulent de l\u2019équité dans votre autre immeuble — ils réduisent donc le flux de trésorerie mais ne sont pas comptabilisés comme équité ici.',
     note4: 'La déduction pour amortissement (DPA) n\u2019est pas prise en compte dans le calcul fiscal.',
     note5: 'Les frais de vente (commission d\u2019agent, frais juridiques, etc.) ne sont pas inclus dans les chiffres de revente.',
     note6: 'L\u2019impôt sur les gains en capital à la revente utilise le taux d\u2019inclusion ci-dessus multiplié par votre taux marginal — une simplification des règles canadiennes, pas un conseil fiscal.',
     note7: 'Les taux de prime d\u2019assurance hypothécaire suivent le barème publié par la SCHL pour les prêts de 1 à 4 logements occupés par le propriétaire. Sous 20 % de mise de fonds, l\u2019outil suppose que vous habiterez une des unités (la seule façon de rendre l\u2019hypothèque assurable) et ajoute automatiquement la prime de la SCHL au prêt.',
     note8: 'Le rendement comptant, le rendement total en %, le ROI et le TRI sont tous mesurés par rapport au comptant réellement investi : la mise de fonds plus toute prime et TVQ non financées, moins le montant refinancé utilisé pour aider à financer l\u2019achat.',
     note9: 'Le TRI tient compte du moment précis de chaque flux de trésorerie annuel ainsi que du produit net à la revente — un rendement annualisé véritable, pas une simple moyenne.',
-    note10: 'Rien de tout cela ne constitue un conseil fiscal ou de prêt — confirmez les règles actuelles avec un courtier hypothécaire ou un comptable avant de vous y fier pour un achat réel.'
+    note10: 'Rien de tout cela ne constitue un conseil fiscal ou de prêt — confirmez les règles actuelles avec un courtier hypothécaire ou un comptable avant de vous y fier pour un achat réel.',
+    agentCommission: 'Commission d\u2019agent (à la vente)',
+    agentCommissionTooltip: 'Frais de vente déduits du produit de la revente. Entrez en % du prix de vente ou en montant fixe.',
+    inspectionFee: 'Frais d\u2019inspection (à l\u2019achat)',
+    notaryFee: 'Frais de notaire (à l\u2019achat)',
+    welcomeTaxLabel: 'Taxe de bienvenue',
+    welcomeTaxTooltip: 'QC 2026 général : 0,5 % jusqu\u2019à 62 900 $, 1 % jusqu\u2019à 315 000 $, 1,5 % au-delà. Montréal ajoute : 2 % au-delà de 500 K$, 2,5 % au-delà de 1 M$, 3 % au-delà de 2 M$, 4 % au-delà de 3 M$. Sélectionnez le type de ville avec le bouton ci-dessous.',
+    saleAgentCommission: 'Commission d\u2019agent',
+    wtGeneral: 'QC général',
+    wtMontreal: 'Montréal',
+    totalProfitTooltip: 'Profit total = Équité accumulée + Flux de trésorerie après impôt + Plus-value − Impôt gains en capital − Commission d’agent − Taxe de bienvenue − Inspection − Notaire. Tous les frais uniques à l’achat et à la vente sont déduits ici. La mise de fonds et le montant refinancé ne sont pas déduits — ils vous sont retournés comme capital, pas comme coût.',
+    capGainsTaxTooltip: 'Formule : (Prix de vente − CBR − Commission) × Taux d’inclusion × Taux marginal. CBR = Prix d’achat + Taxe de bienvenue + Inspection + Notaire. Les frais d’achat augmentent le CBR et réduisent le gain imposable.'
   },
   zh: {
     eyebrow: '交易分析器',
@@ -524,7 +659,7 @@ const translations = {
     mo: '月', yr: '年',
     colYear: '年份', groupIncomeExpenses: '收入与支出', groupMortgage: '抵押贷款', groupTax: '税务', groupReturn: '回报',
     colRent: '租金', colOpEx: '运营支出', colNOI: '净营业收入', colInterest: '利息', colRefiInt: '再融利息',
-    colPrincipal: '本金', colBalance: '贷款余额', colTaxableInc: '应税收入', colTax: '税款',
+    colPrincipal: '本金', colRefiPrincipal: '再融资本金', colRefiBalance: '再融资余额', colBalance: '主贷款余额', colTaxableInc: '应税收入', colTax: '税款',
     colAfterTaxCF: '税后现金流', colCoC: '现金回报率%', colTotalReturnDollar: '总回报$', colTotalReturnPct: '总回报%',
     atResale: '出售时', soldYear: '出售年份',
     saleSalePrice: '售价', saleRemainingBalance: '贷款剩余余额', saleCapitalAppreciation: '资产增值',
@@ -540,14 +675,26 @@ const translations = {
     footerTitle: '本账册内置假设说明：',
     note1: '租金按您设定的年增长率递增；运营支出在整个持有期间保持不变——不含支出通胀。',
     note2: '主贷款及再融资金额的抵押贷款利息均视为可全额抵扣本物业的租金收入，按您的边际税率计算；此假设前提是您有其他收入可在前期亏损时抵扣。',
-    note3: '再融资金额以另一处物业为抵押，按纯利息债务处理——其余额在本账册中保持不变，且不从本物业的出售所得中偿还。',
+    note3: '再融资金额按您设定的年限正常摊销，与主贷款逻辑相同。其利息可从本物业租金收入中扣除；其本金还款是本物业的现金流出，但积累的是另一处物业的权益——因此会减少税后现金流，但不计入本物业的已积累权益。',
     note4: '资本成本扣除（折旧）未纳入税务计算。',
     note5: '出售成本（代理佣金、法律费用等）不含于转售数据中。',
     note6: '出售时的资本利得税按上方设定的计入比率乘以边际税率计算——这是对加拿大规则的简化，并非税务建议。',
     note7: '抵押贷款保险费率依据CMHC针对业主自住1至4个单元物业发布的费率表计算。首付低于20%时，工具假设您将居住在其中一个单元（这是贷款可投保的唯一方式），并自动将CMHC保费计入贷款。',
     note8: '现金回报率、总回报%、投资回报率及内部回报率均以实际自付现金为基准：首付款加上任何未融资的保费及QST，减去用于协助支付本次购房的再融资金额。',
     note9: '内部回报率考虑了每年现金流的时间价值及出售时的净所得——是真实的年化回报，而非简单平均值。',
-    note10: '以上内容均不构成税务或贷款建议——在实际购房前，请向抵押贷款经纪人或会计师确认现行规定。'
+    note10: '以上内容均不构成税务或贷款建议——在实际购房前，请向抵押贷款经纪人或会计师确认现行规定。',
+    agentCommission: '经纪佣金（出售时）',
+    agentCommissionTooltip: '出售时从售价中扣除的销售成本。可输入售价的百分比或固定金额。',
+    inspectionFee: '房屋检验费（购买时）',
+    notaryFee: '公证/律师费（购买时）',
+    welcomeTaxLabel: '欢迎税（Taxe de bienvenue）',
+    welcomeTaxTooltip: '魁省2026一般税率：$62,900以内0.5%，最高至$315,000为1%，超额1.5%。蒙特利尔额外加征：超$500K收2%，超$1M收2.5%，超$2M收3%，超$3M收4%。请用下方按钮选择城市类型。',
+    refinanceLoanTerm: '再融资贷款年限（年）',
+    saleAgentCommission: '经纪佣金',
+    wtGeneral: '魁省一般',
+    wtMontreal: '蒙特利尔',
+    totalProfitTooltip: '总利润 = 已积累权益 + 税后现金流合计 + 资产增值 − 资本利得税 − 经纪佣金 − 欢迎税 − 验成费 − 公证费。所有一次性购买和出售费用均已从利润中扣除。首付和再融资金额不扰除，它们是属于资本回收，不是成本。',
+    capGainsTaxTooltip: '公式：（售价 − 调整后成本基数 − 经纪佣金）× 计入比例 × 边际税率。基数 = 购买价 + 欢迎税 + 验成费 + 公证费。购买成本提高基数，单元相同下应税更少。'
   },
   es: {
     eyebrow: 'Analizador de transacción',
@@ -577,7 +724,7 @@ const translations = {
     mo: 'Mes', yr: 'Año',
     colYear: 'Año', groupIncomeExpenses: 'Ingresos y gastos', groupMortgage: 'Hipoteca', groupTax: 'Impuesto', groupReturn: 'Rendimiento',
     colRent: 'Alquiler', colOpEx: 'Gastos oper.', colNOI: 'INO', colInterest: 'Interés', colRefiInt: 'Int. refi.',
-    colPrincipal: 'Capital', colBalance: 'Saldo', colTaxableInc: 'Ingr. imponible', colTax: 'Impuesto',
+    colPrincipal: 'Capital', colRefiPrincipal: 'Capital refi', colRefiBalance: 'Saldo refi', colBalance: 'Saldo préstamo', colTaxableInc: 'Ingr. imponible', colTax: 'Impuesto',
     colAfterTaxCF: 'FE neto de imp.', colCoC: 'Rend. ef. %', colTotalReturnDollar: 'Rend. total $', colTotalReturnPct: 'Rend. total %',
     atResale: 'En la reventa', soldYear: 'Año de venta',
     saleSalePrice: 'Precio de venta', saleRemainingBalance: 'Saldo restante del préstamo', saleCapitalAppreciation: 'Apreciación de capital',
@@ -593,14 +740,25 @@ const translations = {
     footerTitle: 'Supuestos integrados en este registro:',
     note1: 'El alquiler crece a la tasa anual que usted establece; los gastos operativos se mantienen fijos durante todo el período de tenencia — sin inflación de gastos.',
     note2: 'El interés hipotecario del préstamo principal y de cualquier monto refinanciado se trata como totalmente deducible del ingreso por alquiler de esta propiedad a su tasa marginal; esto asume que tiene otros ingresos para compensar las pérdidas en los primeros años.',
-    note3: 'El monto refinanciado se modela como deuda a solo interés garantizada por el otro inmueble — su saldo nunca cambia aquí y no se repaga con los ingresos de venta de esta propiedad.',
+    note3: 'El monto refinanciado se amortiza como un préstamo normal durante el plazo que usted defina. Su interés es deducible del ingreso por alquiler; sus pagos de capital son salidas de efectivo aquí, pero acumulan patrimonio en su otra propiedad — por lo que reducen el flujo de caja pero no se contabilizan como patrimonio acumulado aquí.',
     note4: 'La depreciación de activos (CCA) no se incluye en el cálculo fiscal.',
     note5: 'Los costos de venta (comisión de agente, honorarios legales, etc.) no están incluidos en los datos de reventa.',
     note6: 'El impuesto sobre ganancias de capital en la reventa usa la tasa de inclusión indicada multiplicada por su tasa marginal — una simplificación de las normas canadienses, no asesoramiento fiscal.',
     note7: 'Las primas del seguro hipotecario siguen el baremo publicado por la CMHC para préstamos de 1 a 4 unidades ocupadas por el propietario. Con menos del 20% de pago inicial, la herramienta asume que vivirá en una de las unidades (único modo de hacer la hipoteca asegurable) y agrega automáticamente la prima al préstamo.',
     note8: 'El rendimiento sobre efectivo, el rendimiento total %, el ROI y la TIR se miden en relación al efectivo real invertido: pago inicial más cualquier prima y QST no financiados, menos el monto refinanciado.',
     note9: 'La TIR considera el momento de cada flujo de caja anual más los ingresos netos en la reventa — un rendimiento anualizado real, no un simple promedio.',
-    note10: 'Nada de esto constituye asesoramiento fiscal o crediticio — confirme las normas vigentes con un agente hipotecario o contador antes de utilizarlo en una compra real.'
+    note10: 'Nada de esto constituye asesoramiento fiscal o crediticio — confirme las normas vigentes con un agente hipotecario o contador antes de utilizarlo en una compra real.',
+    agentCommission: 'Comisi\u00f3n del agente (al vender)',
+    agentCommissionTooltip: 'Costo de venta deducido del producto de la reventa. Ingrese como % del precio de venta o monto fijo.',
+    inspectionFee: 'Gastos de inspecci\u00f3n (compra)',
+    notaryFee: 'Honorarios notariales (compra)',
+    welcomeTaxLabel: 'Impuesto de bienvenida (Taxe de bienvenue)',
+    welcomeTaxTooltip: 'QC 2026 general: 0,5% hasta $62,900 / 1% hasta $315,000 / 1,5% por encima. Montreal agrega: 2% sobre $500K / 2,5% sobre $1M / 3% sobre $2M / 4% sobre $3M. Seleccione el tipo de ciudad con el botón de abajo.',
+    saleAgentCommission: 'Comisi\u00f3n del agente',
+    wtGeneral: 'QC general',
+    wtMontreal: 'Montréal',
+    totalProfitTooltip: 'Beneficio total = Patrimonio acumulado + Flujo de caja neto total + Apreciación − Imp. ganancias de capital − Comisión agente − Impuesto bienvenida − Inspección − Notario. Todos los costos únicos de compra y venta se deducen aquí. El pago inicial y el refinanciamiento no se deducen — son capital que se recupera, no costos.',
+    capGainsTaxTooltip: 'Fórmula: (Precio venta − Costo base ajustado − Comisión) × Tasa inclusión × Tasa marginal. Costo base = Precio compra + Impuesto bienvenida + Inspección + Notario. Los costos de compra reducen la ganancia imponible.'
   }
 };
 let currentLang = 'en';
@@ -695,7 +853,9 @@ function recalc(){
   } else {
     rentNote.classList.remove('show');
   }
-  const refinanceAmount = val('refinanceAmount');
+  const refinanceRaw = val('refinanceAmount');
+  const refinanceIsPercent = document.querySelector('#refiPercent').checked;
+  const refinanceAmount = refinanceIsPercent ? purchasePrice * refinanceRaw / 100 : refinanceRaw;
   const refinanceRate = val('refinanceRate');
 
   const financePremium = true; // always add any premium to the mortgage
@@ -737,8 +897,37 @@ function recalc(){
   const loanAmount = financePremium ? baseLoanAmount + premiumAmount : baseLoanAmount;
   const upfrontInsuranceCash = financePremium ? qstAmount : (premiumAmount + qstAmount);
 
-  // ---- cash actually invested by the buyer ----
-  const totalCashNeeded = downPayment + upfrontInsuranceCash;
+  // ---- welcome tax (taxe de bienvenue) ----
+  // General QC 2026 provincial brackets
+  function calcWelcomeTaxGeneral(price){
+    if(price <= 0) return 0;
+    let tax = Math.min(price, 62900) * 0.005;
+    if(price > 62900)  tax += (Math.min(price, 315000) - 62900) * 0.01;
+    if(price > 315000) tax += (price - 315000) * 0.015;
+    return tax;
+  }
+  // Montreal 2026: standard brackets + city surcharges above $500K
+  function calcWelcomeTaxMontreal(price){
+    if(price <= 0) return 0;
+    let tax = Math.min(price, 62900) * 0.005;
+    if(price > 62900)  tax += (Math.min(price, 315000) - 62900) * 0.01;
+    if(price > 315000) tax += (Math.min(price, 500000) - 315000) * 0.015;
+    if(price > 500000) tax += (Math.min(price, 1000000) - 500000) * 0.02;
+    if(price > 1000000) tax += (Math.min(price, 2000000) - 1000000) * 0.025;
+    if(price > 2000000) tax += (Math.min(price, 3000000) - 2000000) * 0.03;
+    if(price > 3000000) tax += (price - 3000000) * 0.04;
+    return tax;
+  }
+  const isMontreal = document.querySelector('#wtMontreal').checked;
+  const welcomeTax = isMontreal ? calcWelcomeTaxMontreal(purchasePrice) : calcWelcomeTaxGeneral(purchasePrice);
+  document.getElementById('welcomeTaxDisplay').textContent = '$' + Math.round(welcomeTax).toLocaleString('en-US');
+
+  const inspectionFee = val('inspectionFee');
+  const notaryFee = val('notaryFee');
+  const agentCommissionRaw = val('agentCommission');
+  const agentIsPercent = document.querySelector('#agentPct').checked;
+
+  const totalCashNeeded = downPayment + upfrontInsuranceCash + welcomeTax + inspectionFee + notaryFee;
   const cashInvested = Math.max(0, totalCashNeeded - refinanceAmount);
 
   // ---- primary mortgage amortization ----
@@ -749,9 +938,19 @@ function recalc(){
     monthlyPayment = r > 0 ? loanAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : loanAmount / n;
   }
 
-  const refinanceInterestAnnual = refinanceAmount * refinanceRate / 100;
+  // ---- refinance amortization (same logic as primary — balance decreases each year) ----
+  const refinanceLoanTerm = Math.max(1, Math.round(val('refinanceLoanTerm')) || 25);
+  const rRefi = refinanceRate / 100 / 12;
+  const nRefi = refinanceLoanTerm * 12;
+  let refiMonthlyPayment = 0;
+  if(refinanceAmount > 0){
+    refiMonthlyPayment = rRefi > 0
+      ? refinanceAmount * rRefi * Math.pow(1 + rRefi, nRefi) / (Math.pow(1 + rRefi, nRefi) - 1)
+      : refinanceAmount / nRefi;
+  }
 
   let balance = loanAmount;
+  let refiBalance = refinanceAmount;
   const years = [];
   for(let y = 1; y <= resaleYears; y++){
     let interestY = 0, principalY = 0;
@@ -768,17 +967,35 @@ function recalc(){
     }
     if(balance < 0) balance = 0;
 
+    let refiInterestY = 0, refiPrincipalY = 0;
+    for(let m = 1; m <= 12; m++){
+      const monthIndex = (y - 1) * 12 + m;
+      if(refiBalance <= 0.005 || monthIndex > nRefi) break;
+      const interest = refiBalance * rRefi;
+      let principal = refiMonthlyPayment - interest;
+      if(principal > refiBalance) principal = refiBalance;
+      if(principal < 0) principal = 0;
+      refiBalance -= principal;
+      refiInterestY += interest;
+      refiPrincipalY += principal;
+    }
+    if(refiBalance < 0) refiBalance = 0;
+
     const rentY = rentBaseAnnual * Math.pow(1 + rentIncreasePct / 100, y - 1);
     const noiY = rentY - operatingExpensesAnnual;
-    const taxableIncome = noiY - interestY - refinanceInterestAnnual;
+    // refi interest is tax-deductible; refi principal is not (but it's still a cash outflow)
+    const taxableIncome = noiY - interestY - refiInterestY;
     const tax = taxableIncome * marginalTaxRate / 100;
     const mortgagePaymentY = interestY + principalY;
-    const afterTaxCF = noiY - mortgagePaymentY - refinanceInterestAnnual - tax;
+    const refiPaymentY = refiInterestY + refiPrincipalY;
+    const afterTaxCF = noiY - mortgagePaymentY - refiPaymentY - tax;
+    // total return only credits primary principal (equity built in THIS property)
     const totalReturn = afterTaxCF + principalY;
 
     years.push({
       year: y, rent: rentY, opEx: operatingExpensesAnnual, noi: noiY,
-      interest: interestY, refiInterest: refinanceInterestAnnual, principal: principalY, balance,
+      interest: interestY, refiInterest: refiInterestY, refiPrincipal: refiPrincipalY, refiBalance,
+      principal: principalY, balance,
       taxableIncome, tax, afterTaxCF, totalReturn
     });
   }
@@ -787,7 +1004,7 @@ function recalc(){
   const totalReturnPct = years.map(yr => cashInvested > 0 ? yr.totalReturn / cashInvested * 100 : null);
 
   // ---- summary cards ----
-  const cashFlowY1 = years[0].noi - (years[0].interest + years[0].principal) - years[0].refiInterest;
+  const cashFlowY1 = years[0].noi - (years[0].interest + years[0].principal) - (years[0].refiInterest + years[0].refiPrincipal);
 
   const summaryRow = document.getElementById('summaryRow');
   summaryRow.innerHTML = [
@@ -811,6 +1028,8 @@ function recalc(){
       '<td>' + fmtMoney(yr.noi, true) + '</td>' +
       '<td>' + fmtMoney(yr.interest) + '</td>' +
       '<td>' + fmtMoney(yr.refiInterest) + '</td>' +
+      '<td>' + fmtMoney(yr.refiPrincipal) + '</td>' +
+      '<td>' + fmtMoney(yr.refiBalance) + '</td>' +
       '<td>' + fmtMoney(yr.principal) + '</td>' +
       '<td>' + fmtMoney(yr.balance) + '</td>' +
       '<td>' + fmtMoney(yr.taxableIncome) + '</td>' +
@@ -825,12 +1044,17 @@ function recalc(){
   // ---- sale economics ----
   const last = years[years.length - 1];
   const remainingBalance = last ? last.balance : loanAmount;
-  const capitalAppreciation = salePrice - purchasePrice;
-  const capGainsTax = capitalAppreciation > 0 ? capitalAppreciation * capGainsInclusion / 100 * marginalTaxRate / 100 : 0;
-  const netSaleProceeds = salePrice - remainingBalance - capGainsTax;
+  const capitalAppreciation = salePrice - purchasePrice; // gross price gain for display
+  const agentCommission = agentIsPercent ? salePrice * agentCommissionRaw / 100 : agentCommissionRaw;
+  // Canada: ACB = purchase price + buying closing costs; selling costs reduce the capital gain
+  const acb = purchasePrice + welcomeTax + inspectionFee + notaryFee;
+  const capitalGainTaxable = salePrice - acb - agentCommission;
+  const capGainsTax = capitalGainTaxable > 0 ? capitalGainTaxable * capGainsInclusion / 100 * marginalTaxRate / 100 : 0;
+  const netSaleProceeds = salePrice - remainingBalance - capGainsTax - agentCommission;
   const totalCashFlowOverHold = years.reduce((s, yr) => s + yr.afterTaxCF, 0);
   const totalPrincipalPaid = loanAmount - remainingBalance;
-  const totalProfit = totalPrincipalPaid + totalCashFlowOverHold + (capitalAppreciation - capGainsTax);
+  // All one-time costs are real cash outflows: buying costs reduce profit even though they're not in the year-by-year cash flows
+  const totalProfit = totalPrincipalPaid + totalCashFlowOverHold + capitalAppreciation - capGainsTax - agentCommission - welcomeTax - inspectionFee - notaryFee;
   const overallROI = cashInvested > 0 ? totalProfit / cashInvested * 100 : null;
 
   const cfs = [-cashInvested];
@@ -844,11 +1068,12 @@ function recalc(){
     saleStat(t('saleSalePrice'), fmtMoney(salePrice)),
     saleStat(t('saleRemainingBalance'), fmtMoney(remainingBalance)),
     saleStat(t('saleCapitalAppreciation'), fmtMoney(capitalAppreciation, true)),
-    saleStat(t('saleCapGainsTax'), fmtMoney(capGainsTax)),
+    saleStatTip(t('saleCapGainsTax'), 'capGainsTaxTooltip', fmtMoney(capGainsTax)),
+    saleStat(t('saleAgentCommission'), fmtMoney(agentCommission)),
     saleStat(t('saleNetProceeds'), fmtMoney(netSaleProceeds)),
     saleStat(t('saleCashFlowHold'), fmtMoney(totalCashFlowOverHold, true)),
     saleStat(t('saleEquityBuilt'), fmtMoney(totalPrincipalPaid)),
-    saleStat(t('saleTotalProfit'), fmtMoney(totalProfit, true)),
+    saleStatTip(t('saleTotalProfit'), 'totalProfitTooltip', fmtMoney(totalProfit, true)),
     saleStat(t('saleOverallROI'), fmtPct(overallROI, true))
   ].join('');
 
@@ -863,6 +1088,9 @@ function card(label, value, colorClass){
 }
 function saleStat(label, value){
   return '<div><div class="label">' + label + '</div><div class="value">' + value + '</div></div>';
+}
+function saleStatTip(label, tipKey, value){
+  return '<div><div class="label">' + label + '<span class="qmark">?<span class="tooltip">' + t(tipKey) + '</span></span></div><div class="value">' + value + '</div></div>';
 }
 
 document.querySelectorAll('.qmark').forEach(q => {
@@ -879,6 +1107,19 @@ document.addEventListener('click', () => {
 
 document.getElementById('dealForm').addEventListener('input', recalc);
 document.getElementById('dealForm').addEventListener('change', recalc);
+
+// ---- dark mode ----
+function applyTheme(dark){
+  document.body.classList.toggle('dark', dark);
+  const btn = document.getElementById('themeToggle');
+  btn.textContent = dark ? '\u2600\ufe0f Light' : '\ud83c\udf19 Dark';
+  try{ localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch(e){}
+}
+document.getElementById('themeToggle').addEventListener('click', () => {
+  applyTheme(!document.body.classList.contains('dark'));
+});
+try{ if(localStorage.getItem('theme') === 'dark') applyTheme(true); } catch(e){}
+
 applyStaticI18n();
 recalc();
 </script>
